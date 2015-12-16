@@ -36,6 +36,7 @@ namespace McOverlapCore
         {
             frameNumber = 0;
             video = new Capture(filePath);
+            frame = null;
         }
         /// <summary>
         /// returns the next frame in the video or an emtpy mat if there is no next frame 

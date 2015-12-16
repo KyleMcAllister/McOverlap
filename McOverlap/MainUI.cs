@@ -3,6 +3,7 @@ using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
 using Emgu.CV.UI;
 using McOverlap;
+using McOverlapCore;
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -20,7 +21,7 @@ namespace McOverlap
         private DirectoryInfo po_di = null;
         private DirectoryInfo doAll_di = null;
         private DirectoryInfo extracted_di = null;
-        
+        private FileInfo videoFi = null;
 
         //OpenCV Data:
         private Mat base_mat_gray = null;
@@ -300,32 +301,32 @@ namespace McOverlap
 
         public double resizeScale()
         {
-            return double.Parse(textBox2.Text);
+            return 0.1;
         }
 
         public int numNearestNeighbours()
         {
-            return int.Parse(textBox3.Text);
+            return 2;
         }
 
         public double uniqunessThreshold()
         {
-            return double.Parse(textBox4.Text);
+            return 0.8;
         }
 
         public double scaleIncrement()
         {
-            return double.Parse(textBox5.Text);
+            return 1.5;
         }
 
         public int numRotationBins()
         {
-            return int.Parse(textBox6.Text);
+            return 20;
         }
 
         public double ransacReprojThreshold()
         {
-            return double.Parse(textBox7.Text);
+            return 5;
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -342,6 +343,7 @@ namespace McOverlap
         private void button8_Click(object sender, EventArgs e)
         {
 
+            getConsoleTB().Text = "";
             double start = System.DateTime.Now.TimeOfDay.TotalMilliseconds;
             extracted_di = Directory.CreateDirectory(doAll_di.FullName + "_extracted_" + getOverlap() + "_" + detectorType + "_" + extractorType + "_" + matcherType);
 
@@ -356,9 +358,11 @@ namespace McOverlap
                 
             textBox13.Text = baseFi.FullName;
             bool fileExists = false;
+            FileInfo prevFi = baseFi;
             foreach (FileInfo fi in doAll_di.GetFiles())
             {
 
+                
                 po_mat_gray = CvInvoke.Imread(fi.FullName, Emgu.CV.CvEnum.LoadImageType.Grayscale);
                 textBox14.Text = fi.FullName;
                 try
@@ -372,8 +376,7 @@ namespace McOverlap
 
 
                     double overlap = overlapEstimator.execute();
-                    textBox1.AppendText(baseFi.Name + " : " + fi.Name + " has " + overlap + "% overlap" + '\n');
-
+                    textBox1.AppendText(baseFi.Name + " : " + fi.Name + " has " + overlap + "% overlap" + "\r\n");
                     if (overlap <= getOverlap())
                     {
                         if (overlap == 0)
@@ -392,10 +395,10 @@ namespace McOverlap
                         }
                         if (!fileExists)
                         {
-                            File.Copy(fi.FullName, extracted_di.FullName + "/" + fi.Name); //extract file to dir
+                            File.Copy(prevFi.FullName, extracted_di.FullName + "/" + fi.Name); //extract file to dir
                         }
-                        baseFi = fi;
-                        base_mat_gray = CvInvoke.Imread(fi.FullName, Emgu.CV.CvEnum.LoadImageType.Grayscale); //make base file
+                        baseFi = prevFi;
+                        base_mat_gray = CvInvoke.Imread(prevFi.FullName, Emgu.CV.CvEnum.LoadImageType.Grayscale); //make base file
                         textBox13.Text = fi.FullName;
                     }
                 }
@@ -409,6 +412,8 @@ namespace McOverlap
 
                 this.Update();
 
+                prevFi = fi;
+
             }
             
 
@@ -419,6 +424,8 @@ namespace McOverlap
             StreamWriter sw = new StreamWriter(File.Create(extracted_di.FullName + "/" + "output.txt"));
             sw.Write(getConsoleTB().Text);
             sw.Close();
+
+            MessageBox.Show("Done in " + ((end - start) / 1000) / 60 + " minutes");
         }
 
         public double detectorSurfHessianThresh()
@@ -737,6 +744,116 @@ namespace McOverlap
             detectorType = detectorTypeTextBox_surf.Text;
         }
 
+        private void button10_Click(object sender, EventArgs e)
+        {
+            if (opf.ShowDialog() == DialogResult.OK)
+            {
+                videoFi = new FileInfo(opf.FileName);
+                if(videoFi.Extension.ToLower() == ".mp4")
+                {
+                    textBox8.Text = videoFi.FullName;
+                }
+                else
+                {
+                    MessageBox.Show("mp4 video file not selected");
+                }
+                
+            }
+        }
+
+        private void textBox8_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            getConsoleTB().Text = "";
+            double start = System.DateTime.Now.TimeOfDay.TotalMilliseconds;
+            extracted_di = Directory.CreateDirectory(videoFi.FullName.Substring(0, videoFi.FullName.LastIndexOf(".")) + "_extracted_" + getOverlap() + "_" + detectorType + "_" + extractorType + "_" + matcherType);
+            Video video = new Video(videoFi.FullName);
+            Mat baseFrame = video.NextFrame();
+            if (drawImages())
+            {
+                ImageBox ib = getBaseImageBox();
+                ib.Image = baseFrame.ToImage<Gray, byte>().Resize(ib.Width, ib.Height, Emgu.CV.CvEnum.Inter.Linear);
+                textBox13.Text = "Frame number: " + video.FrameNumber + "";
+
+            }
+            //write it to file:
+            String preZeroes = "";
+            for (int j = 10000; j > 0; j /= 10)
+            {
+                if (video.FrameNumber / j == 0)
+                {
+                    preZeroes += "0";
+                }
+            }
+            String frameFileName = extracted_di.FullName + "/" + videoFi.Name + "_frame_" + preZeroes + video.FrameNumber + ".jpg";
+            CvInvoke.Imwrite(frameFileName, baseFrame);
+            Mat poFrame;
+            Mat prevFrame = baseFrame;
+            while (!video.NextFrame().IsEmpty)
+            {
+                poFrame = video.Frame;
+                overlapEstimator = new OverlapEstimator(this, baseFrame.Split()[0], poFrame.Split()[0], detectorType, extractorType, matcherType);
+                if (drawImages())
+                {
+                    ImageBox ib = getPotentiallyOverlappingImageBox();
+                    ib.Image = poFrame.ToImage<Gray, byte>().Resize(ib.Width, ib.Height, Emgu.CV.CvEnum.Inter.Linear);
+                    textBox14.Text = "Frame number: " + video.FrameNumber + "";
+                }
+                double overlap = overlapEstimator.execute();
+                getConsoleTB().AppendText(textBox13.Text + ":" + textBox14.Text + " has " + overlap + "% overlap" + "\r\n");
+                if (overlap <= getOverlap())
+                    {
+                        baseFrame = prevFrame;
+                    if (drawImages())
+                    {
+                        ImageBox ib = getBaseImageBox();
+                        ib.Image = baseFrame.ToImage<Gray, byte>().Resize(ib.Width, ib.Height, Emgu.CV.CvEnum.Inter.Linear);
+                        textBox13.Text = "Frame Number: " + (video.FrameNumber - 1) + "";
+                    }
+                    //write it to file:
+                    preZeroes = "";
+                        for (int j = 10000; j > 0; j /= 10)
+                        {
+                            if (video.FrameNumber / j == 0)
+                            {
+                                preZeroes += "0";
+                            }
+                        }
+                        frameFileName = extracted_di.FullName + "/" + videoFi.Name + "_frame_" + preZeroes + video.FrameNumber + ".jpg";
+                        CvInvoke.Imwrite(frameFileName, baseFrame);
+                    }
+
+                this.Update();
+                prevFrame = poFrame;
+
+            }
+
+            double end = System.DateTime.Now.TimeOfDay.TotalMilliseconds;
+
+            StreamWriter sw = new StreamWriter(File.Create(extracted_di.FullName + "/" + "output.txt"));
+            sw.Write(getConsoleTB().Text);
+            sw.Close();
+
+            MessageBox.Show("Done in " + ((end - start)/1000)/60 + " minutes");
+
+
+
+
+        }
+
+        private void textBox13_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox14_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }

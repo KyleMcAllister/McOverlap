@@ -60,6 +60,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Emgu.CV.Cuda.dll</HintPath>
     </Reference>
+    <Reference Include="Emgu.CV.DebuggerVisualizers.VS2010">
+      <HintPath>..\lib\Emgu.CV.DebuggerVisualizers.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.DebuggerVisualizers.VS2012">
+      <HintPath>..\lib\Emgu.CV.DebuggerVisualizers.VS2012.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.DebuggerVisualizers.VS2013">
+      <HintPath>..\lib\Emgu.CV.DebuggerVisualizers.VS2013.dll</HintPath>
+    </Reference>
     <Reference Include="Emgu.CV.DebuggerVisualizers.VS2015">
       <HintPath>..\lib\Emgu.CV.DebuggerVisualizers.VS2015.dll</HintPath>
     </Reference>

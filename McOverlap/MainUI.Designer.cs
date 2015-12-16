@@ -568,6 +568,7 @@
             this.textBox13.Size = new System.Drawing.Size(220, 45);
             this.textBox13.TabIndex = 44;
             this.textBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox13.TextChanged += new System.EventHandler(this.textBox13_TextChanged);
             // 
             // textBox14
             // 
@@ -577,6 +578,7 @@
             this.textBox14.Size = new System.Drawing.Size(228, 45);
             this.textBox14.TabIndex = 45;
             this.textBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox14.TextChanged += new System.EventHandler(this.textBox14_TextChanged);
             // 
             // button4
             // 
@@ -710,7 +712,7 @@
             this.textBox16.Name = "textBox16";
             this.textBox16.Size = new System.Drawing.Size(31, 20);
             this.textBox16.TabIndex = 58;
-            this.textBox16.Text = "85";
+            this.textBox16.Text = "80";
             // 
             // menuStrip1
             // 
@@ -1329,6 +1331,7 @@
             this.button10.TabIndex = 61;
             this.button10.Text = "Load Video";
             this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // textBox8
             // 
@@ -1337,6 +1340,7 @@
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(168, 60);
             this.textBox8.TabIndex = 62;
+            this.textBox8.TextChanged += new System.EventHandler(this.textBox8_TextChanged);
             // 
             // button11
             // 
@@ -1346,12 +1350,13 @@
             this.button11.TabIndex = 63;
             this.button11.Text = "Extract Frames from Video";
             this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
-            // Form1
+            // MainUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(948, 806);
+            this.ClientSize = new System.Drawing.Size(948, 733);
             this.Controls.Add(this.button11);
             this.Controls.Add(this.textBox8);
             this.Controls.Add(this.button10);
@@ -1390,7 +1395,7 @@
             this.Controls.Add(this.extractorPanel_brisk);
             this.Controls.Add(this.extractorPanel_brief);
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Form1";
+            this.Name = "MainUI";
             this.Text = "Form1";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

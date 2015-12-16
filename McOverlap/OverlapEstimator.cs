@@ -16,8 +16,8 @@ namespace McOverlap
 
         private String detectorType;
 
-        private UMat base_mat_gray;
-        private UMat po_mat_gray;
+        private Mat base_mat_gray;
+        private Mat po_mat_gray;
 
         private VectorOfKeyPoint base_keypoints;
         private VectorOfKeyPoint po_keypoints;
@@ -36,10 +36,6 @@ namespace McOverlap
         private Feature2D detector;
         private Feature2D extractor;
         private DescriptorMatcher matcher;
-
-        private UMat b_mat_col;
-
-        private PolyFiller pf;
         
         public OverlapEstimator(MainUI form, Mat base_mat, Mat po_mat, String detectorType, String extractorType, String matcherType)
         {
@@ -51,8 +47,11 @@ namespace McOverlap
 
             try
             {
-                base_mat_gray = base_mat.ToImage<Gray, byte>().Resize(resizeScale, Emgu.CV.CvEnum.Inter.Linear).ToUMat();
-                po_mat_gray = po_mat.ToImage<Gray, byte>().Resize(resizeScale, Emgu.CV.CvEnum.Inter.Linear).ToUMat();
+                base_mat_gray = new Mat();
+                CvInvoke.Resize(base_mat, base_mat_gray, new Size(400, 300));
+                po_mat_gray = new Mat();
+                CvInvoke.Resize(po_mat, po_mat_gray, new Size(400, 300));
+               
             }
             catch
             {
@@ -115,7 +114,6 @@ namespace McOverlap
                     break;
             }
 
-            this.b_mat_col = new UMat();
         }
 
         public double execute()
@@ -142,7 +140,7 @@ namespace McOverlap
             return drawEstimatedOverlap();
         }
 
-        public int extractFeatures(UMat mat, VectorOfKeyPoint vkp, Mat md)
+        public int extractFeatures(Mat mat, VectorOfKeyPoint vkp, Mat md)
         {
 
             detector.DetectRaw(mat, vkp, null);
@@ -151,7 +149,7 @@ namespace McOverlap
             return 0;
         }
 
-        public int matchFeatures(UMat mat1, Mat md1, UMat mat2, Mat md2, VectorOfVectorOfDMatch matches)
+        public int matchFeatures(Mat mat1, Mat md1, Mat mat2, Mat md2, VectorOfVectorOfDMatch matches)
         {
 
             matcher.Add(md2);
@@ -215,9 +213,7 @@ namespace McOverlap
             double overlap = 0;
             //Features2DToolbox.DrawMatches(po_mat_gray, po_keypoints, base_mat_gray, base_keypoints, kpMatches, result, new MCvScalar(255, 255, 255), new MCvScalar(255, 255, 255), maskMatches);
 
-            b_mat_col = base_mat_gray.ToImage<Gray, byte>().Convert<Bgr, byte>().ToUMat();
-            
-            
+
 
             if (homography != null)
             {
@@ -232,15 +228,15 @@ namespace McOverlap
                 };
                 pts = CvInvoke.PerspectiveTransform(pts, homography);
 
-                
+
 
                 Point[] points = Array.ConvertAll<PointF, Point>(pts, Point.Round);
 
                 using (VectorOfPoint vp = new VectorOfPoint(points))
                 {
 
-                    CvInvoke.Polylines(b_mat_col, vp, true, new MCvScalar(255, 255, 0, 255), 0);
-                    
+                    CvInvoke.Polylines(base_mat_gray, vp, true, new MCvScalar(255, 255, 0, 255), 0);
+
                 }
 
                 ///////////////////////////////////////////////////////
@@ -257,155 +253,21 @@ namespace McOverlap
 
                 IntersectionRegion2Point0 ir = new IntersectionRegion2Point0(borderPoints, points);
                 overlap = ir.ComputeIntersectionRegionArea();
+                overlap = Math.Round(overlap);
 
                 if (form.drawImages())
                 {
-                    ImageBox ib = form.getBaseImageBox();
-                    ib.Image = b_mat_col.ToImage<Bgr, byte>().Resize(ib.Width, ib.Height, Emgu.CV.CvEnum.Inter.Linear);
+                    ImageBox ib = form.getEstimatedOverlapImageBox();
+                    ib.Image = base_mat_gray.ToImage<Gray, byte>().Resize(ib.Width, ib.Height, Emgu.CV.CvEnum.Inter.Linear);
                 }
 
-                
-                
+                return overlap;
+
             }
             else
             {
                 return 0;
             }
-
-            
-            
-
-            Image<Bgr, byte> oimg = b_mat_col.ToImage<Bgr, byte>();
-
-
-
-            Bgr key = new Bgr(255, 255, 0);
-            Bgr notKey = new Bgr(255, 255, 255);
-
-            for(int i = 0; i < oimg.Rows; i++)
-            {
-                for(int j = 0; j < oimg.Cols; j++)
-                {
-                    if (!oimg[i, j].Equals(key))
-                    {
-                        oimg[i, j] = notKey;
-                    }
-                }
-            }
-
-            bool onVborder1 = false;
-            bool onVborder2 = false;
-            bool onHborder1 = false;
-            bool onHborder2 = false;
-            for (int i = 0; i < oimg.Rows; i++)
-            {
-                if (oimg[i, 0].Equals(key))
-                {
-                    onVborder1 = true;
-                }
-                if (oimg[i, oimg.Cols - 1].Equals(key))
-                {
-                    onVborder2 = true;
-                }
-            }
-            
-            
-            for (int j = 0; j < oimg.Cols; j++)
-            {
-                if (oimg[0, j].Equals(key))
-                {
-                    onHborder1 = true;
-                }
-                if (oimg[oimg.Rows - 1, j].Equals(key))
-                {
-                    onHborder2 = true;
-                }
-            }
-            
-
-            pf = new PolyFiller(key, notKey);
-            oimg = pf.fillPoly(oimg);
-
-            if (form.drawImages())
-            {
-                ImageBox ib = form.getEstimatedOverlapImageBox();
-                ib.Image = oimg.Resize(ib.Width, ib.Height, Emgu.CV.CvEnum.Inter.Linear);
-            }
-            
-
-
-            int numBluePixels = 0;
-            int numWhitePixels = 0;
-
-            for(int i = 0; i < oimg.Rows; i++)
-            {
-                for(int j = 0; j < oimg.Cols; j++)
-                {
-                    if (oimg[i, j].Equals(key))
-                    {
-                        numBluePixels++;
-                    }
-                    else
-                    {
-                        numWhitePixels++;
-                    }
-                }
-            }
-
-
-            double ov1 = ((numBluePixels / (double)(oimg.Width*oimg.Height)))*100;
-            double ov2 = ((numWhitePixels/(double)(oimg.Width*oimg.Height)))*100;
-            double maxov = Math.Max(ov1, ov2);
-
-            if (form.drawImages())
-            {
-                ImageBox ib = form.getEstimatedOverlapImageBox();
-                ib.Image = oimg.Resize(ib.Width, ib.Height, Emgu.CV.CvEnum.Inter.Linear);
-            }
-
-
-            int toDoOrNottoDo = 0;
-            if (onHborder1)
-            {
-                toDoOrNottoDo++;
-            }
-            if (onHborder2)
-            {
-                toDoOrNottoDo++;
-            }
-            if (onVborder1)
-            {
-                toDoOrNottoDo++;
-            }
-            if (onVborder2)
-            {
-                toDoOrNottoDo++;
-            }
-
-            return overlap;
-
-            if (toDoOrNottoDo > 1)
-            {
-                return maxov;
-            }
-            else
-            {
-                return ov1;
-            }
-
-            
-                
-
-        }
-
-        public UMat getBase_mat()
-        {
-            return base_mat_gray;
-        }
-
-        public UMat getPO_mat()
-        {
-            return po_mat_gray;
         }
 
         public VectorOfKeyPoint getBase_keypoints()
@@ -435,7 +297,6 @@ namespace McOverlap
             detector.Dispose();
             extractor.Dispose();
             matcher.Dispose();
-            b_mat_col.Dispose();
             result.Dispose();
         }        
     }

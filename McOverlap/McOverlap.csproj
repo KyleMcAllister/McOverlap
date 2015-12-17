@@ -117,6 +117,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="McOverlapController.cs" />
     <Compile Include="MainUI.cs">
       <SubType>Form</SubType>
     </Compile>

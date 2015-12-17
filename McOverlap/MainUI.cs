@@ -47,8 +47,8 @@ namespace McOverlap
             imageBox3.FunctionalMode = ImageBox.FunctionalModeOption.PanAndZoom;
 
             //set default detector, extractor and matcher types:
-            detectorType = DetectorType.BRISK;
-            extractorType = ExtractorType.FREAK;
+            detectorType = DetectorType.FAST;
+            extractorType = ExtractorType.BRIEF;
             matcherType = MatcherType.L2;
 
         }
@@ -330,6 +330,8 @@ namespace McOverlap
             double start = System.DateTime.Now.TimeOfDay.TotalMilliseconds;
             extracted_di = Directory.CreateDirectory(doAll_di.FullName + "_extracted_" + getOverlap() + "_" + detectorType + "_" + extractorType + "_" + matcherType);
 
+            Text = "Output Directory: " + extracted_di.Name;
+
             FileInfo baseFi = doAll_di.GetFiles()[0]; //get first file
             File.Copy(baseFi.FullName, extracted_di.FullName + "/" + baseFi.Name); //extract file to dir
             baseImg = new Image(baseFi.FullName);
@@ -462,6 +464,9 @@ namespace McOverlap
 
             getConsoleTB().Text = "";
             DirectoryInfo di = Directory.CreateDirectory(videoFi.DirectoryName + "/" + videoFi.Name.Split('.')[0] + "_extracted_frames_" + detectorType + "_" + extractorType + "_" + matcherType + "_" + getOverlap());
+            DirectoryInfo probFrames_di = Directory.CreateDirectory(di.FullName + "/" + "problem frames");
+            Text = "Ouput Directory: " + di.Name;
+
             Capture capture = new Capture(videoFi.FullName);
 
             ImageBox ib;
@@ -500,6 +505,8 @@ namespace McOverlap
             
             textBox13.Text = "Frame number: " + i + "";
 
+            
+
             baseframe.Mat.CopyTo(prevFrame.Mat);
             //String name;
             double start = DateTime.Now.TimeOfDay.TotalMinutes;
@@ -520,17 +527,27 @@ namespace McOverlap
                
                 
                     try {
-                        OverlapEstimator oe = new OverlapEstimator(this, detectorType, extractorType, matcherType);
-                        double overlap = oe.execute(baseframe, poframe);
+                    overlapEstimator = new OverlapEstimator(this, detectorType, extractorType, matcherType);
+                    double overlap = overlapEstimator.execute(baseframe, poframe);
                         getConsoleTB().AppendText(textBox13.Text + " | " + textBox14.Text + " has " + overlap + "% overlap" + "\r\n");
                         if (overlap <= getOverlap())
                         {
 
                             if (overlap == 0)
                             {
-                                //clearly something went wrong, abandon frame
+                            //clearly something went wrong, abandon frame
+                            CvInvoke.Imwrite(probFrames_di.FullName + "/" + textBox13.Text.Split(':')[1] + ".jpg", baseframe.Mat);
+                            CvInvoke.Imwrite(probFrames_di.FullName + "/" + textBox14.Text.Split(':')[1] + ".jpg", poframe.Mat);
                                 poframe.Mat.CopyTo(baseframe.Mat);
-                                continue;
+
+                            if (drawImages())
+                            {
+                                ib = getBaseImageBox();
+                                CvInvoke.Resize(baseframe.Mat, displayedBase, new System.Drawing.Size(ib.Width, ib.Height));
+                                ib.Image = displayedBase;
+                            }
+                            textBox13.Text = "Frame number: " + i + "";
+                            continue;
                             }
 
                             prevFrame.Mat.CopyTo(baseframe.Mat);
@@ -561,7 +578,7 @@ namespace McOverlap
                     }
                     catch(Exception ex)
                     {
-                        MessageBox.Show("Creating the overlap estimator");
+                        MessageBox.Show("overlap estimator problem");
                         MessageBox.Show(ex.ToString());
                     }
                     
@@ -581,7 +598,7 @@ namespace McOverlap
             sw.Write(getConsoleTB().Text);
             sw.Close();
 
-            MessageBox.Show(getConsoleTB().Text);
+            MessageBox.Show(finalOutput);
 
             
         }
@@ -639,6 +656,11 @@ namespace McOverlap
         private void l2SqrToolStripMenuItem_Click(object sender, EventArgs e)
         {
             matcherType = MatcherType.L2SQR;
+        }
+
+        private void MainUI_Load(object sender, EventArgs e)
+        {
+
         }
     }
 

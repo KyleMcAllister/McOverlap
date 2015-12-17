@@ -660,6 +660,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainUI";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.MainUI_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).EndInit();

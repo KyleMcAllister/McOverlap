@@ -78,33 +78,32 @@ namespace McOverlap
             extractor.ExtractDescriptors(reducedBaseImg);
             extractor.ExtractDescriptors(reducedPOImg);
 
-            /*ImageBox ib = form.getBaseImageBox();
-            ib.Image = drawFeatures(base_mat_gray.ToMat(Emgu.CV.CvEnum.AccessType.ReadWrite), base_keypoints);
-            ib = form.getPotentiallyOverlappingImageBox();
-            ib.Image = drawFeatures(po_mat_gray.ToMat(Emgu.CV.CvEnum.AccessType.ReadWrite), po_keypoints);*/
-
             kpMatches = matcher.MatchDescriptors(2, reducedBaseImg, reducedPOImg);
+
+            int i = 0;
 
             if(kpMatches.Size == 0)
             {
-                System.Console.WriteLine("..problem..");
+                System.Console.WriteLine("..No Matches");
                 return 0;
             }
             else
             {
-                createHomography(reducedBaseImg, reducedPOImg, kpMatches);
+
+                i = createHomography(reducedBaseImg, reducedPOImg, kpMatches);
+                
             }
 
+            if (i == -1)
+            {
+                return 0; ;
+            }
 
             return drawEstimatedOverlap(reducedBaseImg, reducedPOImg);
         }
 
         public int createHomography(McOverlapCore.Image baseImg, McOverlapCore.Image poImg,VectorOfVectorOfDMatch matches)
         {
-
-            int nearestNeighbours = form.numNearestNeighbours();
-            
-
             try
             { 
                 maskMatches = new Mat(matches.Size, 1, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
@@ -112,10 +111,18 @@ namespace McOverlap
 
                 double uniqunessThreshold = form.uniqunessThreshold();
 
-                
-                Features2DToolbox.VoteForUniqueness(matches, uniqunessThreshold, maskMatches);
+                try
+                {
+                    Features2DToolbox.VoteForUniqueness(matches, uniqunessThreshold, maskMatches);
 
-                
+                }
+                catch(IndexOutOfRangeException ex)
+                {
+                    Console.WriteLine("..problem..");
+                    return -1;
+                }
+
+
                 int nonZeroCount = CvInvoke.CountNonZero(maskMatches);
                 if(nonZeroCount >= 4)
                 {

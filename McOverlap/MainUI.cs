@@ -329,6 +329,7 @@ namespace McOverlap
             getConsoleTB().Text = "";
             double start = System.DateTime.Now.TimeOfDay.TotalMilliseconds;
             extracted_di = Directory.CreateDirectory(doAll_di.FullName + "_extracted_" + getOverlap() + "_" + detectorType + "_" + extractorType + "_" + matcherType);
+            DirectoryInfo probFrames_di = Directory.CreateDirectory(extracted_di.FullName + "/" + "problem frames");
 
             Text = "Output Directory: " + extracted_di.Name;
 
@@ -372,8 +373,20 @@ namespace McOverlap
                         if (overlap == 0)
                         {
                             //clearly something went wrong, abandon frame
+                            //save base image in prob files
+                            File.Copy(baseFi.FullName, probFrames_di.FullName + "/" + baseFi.Name);
+                            //save po image in prob files
+                            File.Copy(fi.FullName, probFrames_di.FullName + "/" + fi.Name);
                             baseFi = fi;
                             baseImg = new Image(fi.FullName);
+                            if (drawImages())
+                            {
+                                ImageBox ib = getBaseImageBox();
+                                CvInvoke.Resize(baseImg.Mat, displayedBase, new System.Drawing.Size(ib.Width, ib.Height));
+                                ib.Image = displayedBase;
+                            }
+
+                            textBox13.Text = baseFi.FullName;
                             continue;
                         }
                         foreach (FileInfo fi2 in extracted_di.GetFiles())
@@ -397,7 +410,7 @@ namespace McOverlap
                             ib.Image = displayedBase;
                         }
 
-                        textBox13.Text = fi.FullName;
+                        textBox13.Text = prevFi.FullName;
                     }
                 }
                 catch (Exception ex)
@@ -461,6 +474,8 @@ namespace McOverlap
 
         private void button11_Click(object sender, EventArgs e)
         {
+
+
 
             getConsoleTB().Text = "";
             DirectoryInfo di = Directory.CreateDirectory(videoFi.DirectoryName + "/" + videoFi.Name.Split('.')[0] + "_extracted_frames_" + detectorType + "_" + extractorType + "_" + matcherType + "_" + getOverlap());

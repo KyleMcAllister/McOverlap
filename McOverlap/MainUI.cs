@@ -51,6 +51,11 @@ namespace McOverlap
             extractorType = ExtractorType.BRIEF;
             matcherType = MatcherType.L2;
 
+            //display current settings:
+            detectorTypeTB.Text = detectorType.ToString();
+            extractorTypeTB.Text = extractorType.ToString();
+            matcherTypeTB.Text = matcherType.ToString();
+
         }
 
         //Load Base Image Button:
@@ -325,7 +330,7 @@ namespace McOverlap
 
         private void button8_Click(object sender, EventArgs e)
         {
-
+            progressBar1.Value = 0;
             getConsoleTB().Text = "";
             double start = System.DateTime.Now.TimeOfDay.TotalMilliseconds;
             extracted_di = Directory.CreateDirectory(doAll_di.FullName + "_extracted_" + getOverlap() + "_" + detectorType + "_" + extractorType + "_" + matcherType);
@@ -352,7 +357,7 @@ namespace McOverlap
             foreach (FileInfo fi in doAll_di.GetFiles())
             {
 
-
+                progressBar1.Value = (progressBar1.Value + 10) % 99;
                 poImg = new Image(fi.FullName);
                 textBox14.Text = fi.FullName;
                 try
@@ -437,6 +442,8 @@ namespace McOverlap
             sw.Write(getConsoleTB().Text);
             sw.Close();
 
+            progressBar1.Value = 100;
+
             MessageBox.Show("Done in " + ((end - start) / 1000) / 60 + " minutes");
         }
 
@@ -475,7 +482,7 @@ namespace McOverlap
         private void button11_Click(object sender, EventArgs e)
         {
 
-
+            progressBar1.Value = 0;
 
             getConsoleTB().Text = "";
             DirectoryInfo di = Directory.CreateDirectory(videoFi.DirectoryName + "/" + videoFi.Name.Split('.')[0] + "_extracted_frames_" + detectorType + "_" + extractorType + "_" + matcherType + "_" + getOverlap());
@@ -527,6 +534,7 @@ namespace McOverlap
             double start = DateTime.Now.TimeOfDay.TotalMinutes;
             while (capture.Grab())
             {
+                progressBar1.Value = (progressBar1.Value + 10) % 99;
                 i++;
                 capture.Retrieve(poframe.Mat);
                 textBox14.Text = "Frame number: " + i + "";
@@ -613,6 +621,8 @@ namespace McOverlap
             sw.Write(getConsoleTB().Text);
             sw.Close();
 
+            progressBar1.Value = 100;
+
             MessageBox.Show(finalOutput);
 
             
@@ -621,59 +631,75 @@ namespace McOverlap
         private void bRISKToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             detectorType = DetectorType.BRISK;
+            detectorTypeTB.Text = detectorType.ToString();
         }
 
         private void fASTToolStripMenuItem_Click(object sender, EventArgs e)
         {
             detectorType = DetectorType.FAST;
+            detectorTypeTB.Text = detectorType.ToString();
         }
 
         private void bRIEFToolStripMenuItem_Click(object sender, EventArgs e)
         {
             extractorType = ExtractorType.BRIEF;
+            extractorTypeTB.Text = extractorType.ToString();
         }
 
         private void bRISKToolStripMenuItem_Click(object sender, EventArgs e)
         {
             extractorType = ExtractorType.BRISK;
+            extractorTypeTB.Text = extractorType.ToString();
         }
 
         private void fREAKToolStripMenuItem_Click(object sender, EventArgs e)
         {
             extractorType = ExtractorType.FREAK;
+            extractorTypeTB.Text = extractorType.ToString();
         }
 
         private void hammingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             matcherType = MatcherType.HAMMING;
+            matcherTypeTB.Text = matcherType.ToString();
         }
 
         private void hamming2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             matcherType = MatcherType.HAMMING2;
+            matcherTypeTB.Text = matcherType.ToString();
         }
 
         private void infToolStripMenuItem_Click(object sender, EventArgs e)
         {
             matcherType = MatcherType.INF;
+            matcherTypeTB.Text = matcherType.ToString();
         }
 
         private void l1ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             matcherType = MatcherType.L1;
+            matcherTypeTB.Text = matcherType.ToString();
         }
 
         private void l2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             matcherType = MatcherType.L2;
+            matcherTypeTB.Text = matcherType.ToString();
         }
 
         private void l2SqrToolStripMenuItem_Click(object sender, EventArgs e)
         {
             matcherType = MatcherType.L2SQR;
+            matcherTypeTB.Text = matcherType.ToString();
         }
 
         private void MainUI_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void progressBar1_Click(object sender, EventArgs e)
         {
 
         }

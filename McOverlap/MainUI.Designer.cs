@@ -80,11 +80,6 @@
             this.bRIEFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bRISKToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fREAKToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label40 = new System.Windows.Forms.Label();
-            this.button10 = new System.Windows.Forms.Button();
-            this.textBox8 = new System.Windows.Forms.TextBox();
-            this.button11 = new System.Windows.Forms.Button();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.matcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hammingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hamming2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,6 +87,15 @@
             this.l1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.l2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.l2SqrToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label40 = new System.Windows.Forms.Label();
+            this.button10 = new System.Windows.Forms.Button();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.button11 = new System.Windows.Forms.Button();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.detectorTypeTB = new System.Windows.Forms.TextBox();
+            this.extractorTypeTB = new System.Windows.Forms.TextBox();
+            this.matcherTypeTB = new System.Windows.Forms.TextBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox2)).BeginInit();
@@ -489,14 +493,14 @@
             // bRISKToolStripMenuItem1
             // 
             this.bRISKToolStripMenuItem1.Name = "bRISKToolStripMenuItem1";
-            this.bRISKToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.bRISKToolStripMenuItem1.Size = new System.Drawing.Size(104, 22);
             this.bRISKToolStripMenuItem1.Text = "BRISK";
             this.bRISKToolStripMenuItem1.Click += new System.EventHandler(this.bRISKToolStripMenuItem1_Click);
             // 
             // fASTToolStripMenuItem
             // 
             this.fASTToolStripMenuItem.Name = "fASTToolStripMenuItem";
-            this.fASTToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.fASTToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
             this.fASTToolStripMenuItem.Text = "FAST";
             this.fASTToolStripMenuItem.Click += new System.EventHandler(this.fASTToolStripMenuItem_Click);
             // 
@@ -513,23 +517,78 @@
             // bRIEFToolStripMenuItem
             // 
             this.bRIEFToolStripMenuItem.Name = "bRIEFToolStripMenuItem";
-            this.bRIEFToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.bRIEFToolStripMenuItem.Size = new System.Drawing.Size(108, 22);
             this.bRIEFToolStripMenuItem.Text = "BRIEF";
             this.bRIEFToolStripMenuItem.Click += new System.EventHandler(this.bRIEFToolStripMenuItem_Click);
             // 
             // bRISKToolStripMenuItem
             // 
             this.bRISKToolStripMenuItem.Name = "bRISKToolStripMenuItem";
-            this.bRISKToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.bRISKToolStripMenuItem.Size = new System.Drawing.Size(108, 22);
             this.bRISKToolStripMenuItem.Text = "BRISK";
             this.bRISKToolStripMenuItem.Click += new System.EventHandler(this.bRISKToolStripMenuItem_Click);
             // 
             // fREAKToolStripMenuItem
             // 
             this.fREAKToolStripMenuItem.Name = "fREAKToolStripMenuItem";
-            this.fREAKToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.fREAKToolStripMenuItem.Size = new System.Drawing.Size(108, 22);
             this.fREAKToolStripMenuItem.Text = "FREAK";
             this.fREAKToolStripMenuItem.Click += new System.EventHandler(this.fREAKToolStripMenuItem_Click);
+            // 
+            // matcherToolStripMenuItem
+            // 
+            this.matcherToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.hammingToolStripMenuItem,
+            this.hamming2ToolStripMenuItem,
+            this.infToolStripMenuItem,
+            this.l1ToolStripMenuItem,
+            this.l2ToolStripMenuItem,
+            this.l2SqrToolStripMenuItem});
+            this.matcherToolStripMenuItem.Name = "matcherToolStripMenuItem";
+            this.matcherToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
+            this.matcherToolStripMenuItem.Text = "Matcher";
+            // 
+            // hammingToolStripMenuItem
+            // 
+            this.hammingToolStripMenuItem.Name = "hammingToolStripMenuItem";
+            this.hammingToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.hammingToolStripMenuItem.Text = "Hamming";
+            this.hammingToolStripMenuItem.Click += new System.EventHandler(this.hammingToolStripMenuItem_Click);
+            // 
+            // hamming2ToolStripMenuItem
+            // 
+            this.hamming2ToolStripMenuItem.Name = "hamming2ToolStripMenuItem";
+            this.hamming2ToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.hamming2ToolStripMenuItem.Text = "Hamming2";
+            this.hamming2ToolStripMenuItem.Click += new System.EventHandler(this.hamming2ToolStripMenuItem_Click);
+            // 
+            // infToolStripMenuItem
+            // 
+            this.infToolStripMenuItem.Name = "infToolStripMenuItem";
+            this.infToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.infToolStripMenuItem.Text = "Inf";
+            this.infToolStripMenuItem.Click += new System.EventHandler(this.infToolStripMenuItem_Click);
+            // 
+            // l1ToolStripMenuItem
+            // 
+            this.l1ToolStripMenuItem.Name = "l1ToolStripMenuItem";
+            this.l1ToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.l1ToolStripMenuItem.Text = "L1";
+            this.l1ToolStripMenuItem.Click += new System.EventHandler(this.l1ToolStripMenuItem_Click);
+            // 
+            // l2ToolStripMenuItem
+            // 
+            this.l2ToolStripMenuItem.Name = "l2ToolStripMenuItem";
+            this.l2ToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.l2ToolStripMenuItem.Text = "L2";
+            this.l2ToolStripMenuItem.Click += new System.EventHandler(this.l2ToolStripMenuItem_Click);
+            // 
+            // l2SqrToolStripMenuItem
+            // 
+            this.l2SqrToolStripMenuItem.Name = "l2SqrToolStripMenuItem";
+            this.l2SqrToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.l2SqrToolStripMenuItem.Text = "L2Sqr";
+            this.l2SqrToolStripMenuItem.Click += new System.EventHandler(this.l2SqrToolStripMenuItem_Click);
             // 
             // label40
             // 
@@ -568,66 +627,53 @@
             this.button11.UseVisualStyleBackColor = true;
             this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
-            // matcherToolStripMenuItem
+            // detectorTypeTB
             // 
-            this.matcherToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hammingToolStripMenuItem,
-            this.hamming2ToolStripMenuItem,
-            this.infToolStripMenuItem,
-            this.l1ToolStripMenuItem,
-            this.l2ToolStripMenuItem,
-            this.l2SqrToolStripMenuItem});
-            this.matcherToolStripMenuItem.Name = "matcherToolStripMenuItem";
-            this.matcherToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
-            this.matcherToolStripMenuItem.Text = "Matcher";
+            this.detectorTypeTB.BackColor = System.Drawing.Color.Black;
+            this.detectorTypeTB.ForeColor = System.Drawing.Color.White;
+            this.detectorTypeTB.Location = new System.Drawing.Point(12, 565);
+            this.detectorTypeTB.Name = "detectorTypeTB";
+            this.detectorTypeTB.Size = new System.Drawing.Size(100, 20);
+            this.detectorTypeTB.TabIndex = 64;
+            this.detectorTypeTB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // hammingToolStripMenuItem
+            // extractorTypeTB
             // 
-            this.hammingToolStripMenuItem.Name = "hammingToolStripMenuItem";
-            this.hammingToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.hammingToolStripMenuItem.Text = "Hamming";
-            this.hammingToolStripMenuItem.Click += new System.EventHandler(this.hammingToolStripMenuItem_Click);
+            this.extractorTypeTB.BackColor = System.Drawing.Color.Black;
+            this.extractorTypeTB.ForeColor = System.Drawing.Color.White;
+            this.extractorTypeTB.Location = new System.Drawing.Point(118, 565);
+            this.extractorTypeTB.Name = "extractorTypeTB";
+            this.extractorTypeTB.Size = new System.Drawing.Size(100, 20);
+            this.extractorTypeTB.TabIndex = 65;
+            this.extractorTypeTB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // hamming2ToolStripMenuItem
+            // matcherTypeTB
             // 
-            this.hamming2ToolStripMenuItem.Name = "hamming2ToolStripMenuItem";
-            this.hamming2ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.hamming2ToolStripMenuItem.Text = "Hamming2";
-            this.hamming2ToolStripMenuItem.Click += new System.EventHandler(this.hamming2ToolStripMenuItem_Click);
+            this.matcherTypeTB.BackColor = System.Drawing.Color.Black;
+            this.matcherTypeTB.ForeColor = System.Drawing.Color.White;
+            this.matcherTypeTB.Location = new System.Drawing.Point(224, 565);
+            this.matcherTypeTB.Name = "matcherTypeTB";
+            this.matcherTypeTB.Size = new System.Drawing.Size(100, 20);
+            this.matcherTypeTB.TabIndex = 66;
+            this.matcherTypeTB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // infToolStripMenuItem
+            // progressBar1
             // 
-            this.infToolStripMenuItem.Name = "infToolStripMenuItem";
-            this.infToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.infToolStripMenuItem.Text = "Inf";
-            this.infToolStripMenuItem.Click += new System.EventHandler(this.infToolStripMenuItem_Click);
-            // 
-            // l1ToolStripMenuItem
-            // 
-            this.l1ToolStripMenuItem.Name = "l1ToolStripMenuItem";
-            this.l1ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.l1ToolStripMenuItem.Text = "L1";
-            this.l1ToolStripMenuItem.Click += new System.EventHandler(this.l1ToolStripMenuItem_Click);
-            // 
-            // l2ToolStripMenuItem
-            // 
-            this.l2ToolStripMenuItem.Name = "l2ToolStripMenuItem";
-            this.l2ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.l2ToolStripMenuItem.Text = "L2";
-            this.l2ToolStripMenuItem.Click += new System.EventHandler(this.l2ToolStripMenuItem_Click);
-            // 
-            // l2SqrToolStripMenuItem
-            // 
-            this.l2SqrToolStripMenuItem.Name = "l2SqrToolStripMenuItem";
-            this.l2SqrToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.l2SqrToolStripMenuItem.Text = "L2Sqr";
-            this.l2SqrToolStripMenuItem.Click += new System.EventHandler(this.l2SqrToolStripMenuItem_Click);
+            this.progressBar1.Location = new System.Drawing.Point(858, 554);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(75, 31);
+            this.progressBar1.TabIndex = 67;
+            this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
             // 
             // MainUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(948, 580);
+            this.ClientSize = new System.Drawing.Size(948, 592);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.matcherTypeTB);
+            this.Controls.Add(this.extractorTypeTB);
+            this.Controls.Add(this.detectorTypeTB);
             this.Controls.Add(this.button11);
             this.Controls.Add(this.textBox8);
             this.Controls.Add(this.button10);
@@ -733,6 +779,10 @@
         private System.Windows.Forms.ToolStripMenuItem l1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem l2ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem l2SqrToolStripMenuItem;
+        private System.Windows.Forms.TextBox detectorTypeTB;
+        private System.Windows.Forms.TextBox extractorTypeTB;
+        private System.Windows.Forms.TextBox matcherTypeTB;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 

@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace McOverlapCore.ImageProcessing
 {
-    public enum EMatcherType
+    public enum ExtractorType
     {
-        HAMMING,
-        HAMMING2,
-        INF,
-        L1,
-        L2,
-        L2SQR,
+        BRIEF,
+        BRISK,
+        FREAK,
         NULL
     }
 }

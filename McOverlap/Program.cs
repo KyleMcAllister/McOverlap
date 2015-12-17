@@ -17,10 +17,18 @@ namespace McOverlap
         [STAThread]
         static void Main()
         {
+            try
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new MainUI());
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("It happnened somwhere");
+                MessageBox.Show(ex.ToString());
+            }
             
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainUI());
         }
     }
 }

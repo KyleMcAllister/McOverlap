@@ -11,14 +11,14 @@ namespace McOverlapCore.ImageProcessing
 {
     public class KeypointDetector
     {
-        private EDetectorType type;
+        private DetectorType type;
         private Feature2D detector;
         /// <summary>
         /// useful when initialising a collection of Keypoint Detectors
         /// </summary>
         public KeypointDetector()
         {
-            type = EDetectorType.NULL;
+            type = DetectorType.NULL;
             detector = null;
         }
         
@@ -26,7 +26,7 @@ namespace McOverlapCore.ImageProcessing
         /// creates a detector of a specified type
         /// </summary>
         /// <param name="type"></param>
-        public KeypointDetector(EDetectorType type)
+        public KeypointDetector(DetectorType type)
         {
             this.type = type;
             detector = CreateDetector(type);
@@ -37,31 +37,31 @@ namespace McOverlapCore.ImageProcessing
         /// </summary>
         /// <param name="mat"></param>
         /// <returns></returns>
-        public VectorOfKeyPoint DetectKeypoints(Image img)
+        public bool DetectKeypoints(Image img)
         {
-            VectorOfKeyPoint ret = new VectorOfKeyPoint(); //the keypoints to return
             if (!img.Mat.IsEmpty)
             {
-                detector.DetectRaw(img.Mat, ret);
+                detector.DetectRaw(img.Mat, img.Keypoints);
+                return true;
             }
-            return ret;
+            return false;
         }
         /// <summary>
         /// creates a keypoint detector based off the type that is passed
         /// </summary>
         /// <param name="type"></param>
-        private Feature2D CreateDetector(EDetectorType type)
+        private Feature2D CreateDetector(DetectorType type)
         {
             Feature2D ret = null; //the detector to return
             switch (type)
             {
-                case EDetectorType.BRISK:
+                case DetectorType.BRISK:
                     ret = new Brisk();
                     break;
-                case EDetectorType.FAST:
+                case DetectorType.FAST:
                     ret = new FastDetector();
                     break;
-                case EDetectorType.NULL:
+                case DetectorType.NULL:
                     ret = null;
                     break;
             }
@@ -72,7 +72,7 @@ namespace McOverlapCore.ImageProcessing
         /// get - return type of detector that has been initialized
         /// set - used to change the type of detector that is used
         /// </summary>
-        public EDetectorType Type
+        public DetectorType Type
         {
             get { return type; }
             set

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace McOverlap
+namespace McOverlapCore.ImageProcessing
 {
-    enum EClipToHalfPlaneAction
+    public enum ClipToHalfPlaneAction
     {
         DISCARD_LINE,
         UPDATE_START,

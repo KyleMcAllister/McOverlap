@@ -10,18 +10,18 @@ namespace McOverlapCore.ImageProcessing
 {
     public class DescriptorMatcher
     {
-        private EMatcherType type;
+        private MatcherType type;
         private Emgu.CV.Features2D.DescriptorMatcher matcher;
         /// <summary>
         /// usefule when iniatializing a collection of descriptor matchers
         /// </summary>
         public DescriptorMatcher()
         {
-            type = EMatcherType.NULL;
+            type = MatcherType.NULL;
             matcher = null;
         }
 
-        public DescriptorMatcher(EMatcherType type)
+        public DescriptorMatcher(MatcherType type)
         {
             this.type = type;
             matcher = CreateMatcher(type);
@@ -48,31 +48,31 @@ namespace McOverlapCore.ImageProcessing
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private Emgu.CV.Features2D.DescriptorMatcher CreateMatcher(EMatcherType type)
+        private Emgu.CV.Features2D.DescriptorMatcher CreateMatcher(MatcherType type)
         {
             Emgu.CV.Features2D.DescriptorMatcher ret = null;//the descriptor matcher to return
 
             switch (type)
             {
-                case EMatcherType.HAMMING:
+                case MatcherType.HAMMING:
                     ret = new BFMatcher(DistanceType.Hamming);
                     break;
-                case EMatcherType.HAMMING2:
+                case MatcherType.HAMMING2:
                     ret = new BFMatcher(DistanceType.Hamming2);
                     break;
-                case EMatcherType.INF:
+                case MatcherType.INF:
                     ret = new BFMatcher(DistanceType.Inf);
                     break;
-                case EMatcherType.L1:
+                case MatcherType.L1:
                     ret = new BFMatcher(DistanceType.L1);
                     break;
-                case EMatcherType.L2:
+                case MatcherType.L2:
                     ret = new BFMatcher(DistanceType.L2);
                     break;
-                case EMatcherType.L2SQR:
+                case MatcherType.L2SQR:
                     ret = new BFMatcher(DistanceType.L2Sqr);
                     break;
-                case EMatcherType.NULL:
+                case MatcherType.NULL:
                     ret = null;
                     break;
             }
@@ -83,7 +83,7 @@ namespace McOverlapCore.ImageProcessing
         /// get - returns the type of matcher that has been initialize
         /// set - used to change the type of matcher that is being used
         /// </summary>
-        public EMatcherType Type
+        public MatcherType Type
         {
             get { return type; }
             set

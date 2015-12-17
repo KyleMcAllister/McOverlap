@@ -1,21 +1,17 @@
 ﻿using Emgu.CV.Structure;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace McOverlap
+namespace McOverlapCore.ImageProcessing
 {
     //computes the intersection between two shapes [red, blue] defined by 2 sets of points [redpts, bluepts]
     /// <summary>
     /// points are assumed to be ordered counterclockwise: 
     /// i.e. there exists a line between point[0] and point[1], ..., point[n] and point[0]
     /// </summary>
-    class IntersectionRegion2Point0
+    public class IntersectionRegion
     {
         private Point[] redPts;
         private Point[] bluePts;
@@ -25,7 +21,7 @@ namespace McOverlap
         private List<LineSegment2D> redLines = new List<LineSegment2D>();
         private List<LineSegment2D> blueLines = new List<LineSegment2D>();
 
-        public IntersectionRegion2Point0(Point[] red, Point[] blue)
+        public IntersectionRegion(Point[] red, Point[] blue)
         {
             redPts = red;
             bluePts = blue;
@@ -196,24 +192,24 @@ namespace McOverlap
                     
                         switch (ClipToHalfPlaneAction(halfPlane, line))
                         {
-                            case EClipToHalfPlaneAction.DISCARD_LINE:
-                                
-                                redLines.Remove(line);
+                            case ImageProcessing.ClipToHalfPlaneAction.DISCARD_LINE:
+
+                            redLines.Remove(line);
                             i--;
                                 break;
-                            case EClipToHalfPlaneAction.DO_NOTHING:
+                            case ImageProcessing.ClipToHalfPlaneAction.DO_NOTHING:
                                 
                                 //do nothing..
                                 break;
-                            case EClipToHalfPlaneAction.UPDATE_END:
+                            case ImageProcessing.ClipToHalfPlaneAction.UPDATE_END:
                                 
                                 line.P2 = Intersection(halfPlane, line);
-                                redLines[i] = line;
+                            redLines[i] = line;
                                 break;
-                            case EClipToHalfPlaneAction.UPDATE_START:
+                            case ImageProcessing.ClipToHalfPlaneAction.UPDATE_START:
                                 
                                 line.P1 = Intersection(halfPlane, line);
-                                redLines[i] = line;
+                            redLines[i] = line;
                                 break;
                         }
 
@@ -236,24 +232,24 @@ namespace McOverlap
                     String result = "";
                     switch (ClipToHalfPlaneAction(halfPlane, line))
                         {
-                            case EClipToHalfPlaneAction.DISCARD_LINE:
+                            case ImageProcessing.ClipToHalfPlaneAction.DISCARD_LINE:
                                 result = "remove blue line";
-                                blueLines.Remove(line);
+                            blueLines.Remove(line);
                                 i--;
                                 break;
-                            case EClipToHalfPlaneAction.DO_NOTHING:
+                            case ImageProcessing.ClipToHalfPlaneAction.DO_NOTHING:
                                 result = "do nothing";
                                 //do nothing..
                                 break;
-                            case EClipToHalfPlaneAction.UPDATE_END:
+                            case ImageProcessing.ClipToHalfPlaneAction.UPDATE_END:
                                 result = "update end of blue line";
                                 line.P2 = Intersection(halfPlane, line);
-                                blueLines[i] = line;
+                            blueLines[i] = line;
                                 break;
-                            case EClipToHalfPlaneAction.UPDATE_START:
+                            case ImageProcessing.ClipToHalfPlaneAction.UPDATE_START:
                                 result = "update start of blue line";
                                 line.P1 = Intersection(halfPlane, line);
-                                blueLines[i] = line;
+                            blueLines[i] = line;
                                 break;
                         }
                     //MessageBox.Show("HalfPlane: " + halfPlane.P1 + halfPlane.P2 + "\r\n" + "Line: " + line.P1 + line.P2 + "\r\n" + "Action taken: " + result);
@@ -262,33 +258,33 @@ namespace McOverlap
             }
         }
 
-        public EClipToHalfPlaneAction ClipToHalfPlaneAction(LineSegment2D halfPlane, LineSegment2D line)
+        public ClipToHalfPlaneAction ClipToHalfPlaneAction(LineSegment2D halfPlane, LineSegment2D line)
         {
 
             if ((halfPlane.Side(line.P1) == 1) && (halfPlane.Side(line.P2) == 1))
             {
                 
                 //both outside: discardLine
-                return EClipToHalfPlaneAction.DISCARD_LINE;
+                return ImageProcessing.ClipToHalfPlaneAction.DISCARD_LINE;
                 
             }   
             else if(halfPlane.Side(line.P1) == 1)
             {
                 
                 //start outside; end inside: replace start with intersection
-                return EClipToHalfPlaneAction.UPDATE_START;
+                return ImageProcessing.ClipToHalfPlaneAction.UPDATE_START;
             }
             else if(halfPlane.Side(line.P2) == 1)
             {
                 
                 //end outside, start inside: replace end with intersection
-                return EClipToHalfPlaneAction.UPDATE_END;
+                return ImageProcessing.ClipToHalfPlaneAction.UPDATE_END;
             }
             else
             {
                 
                 //both inside: keep both points
-                return EClipToHalfPlaneAction.DO_NOTHING;
+                return ImageProcessing.ClipToHalfPlaneAction.DO_NOTHING;
             }
 
         }

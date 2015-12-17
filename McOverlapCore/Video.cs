@@ -11,7 +11,6 @@ namespace McOverlapCore
     {
         
         private Capture video;
-        private Mat frame; //the currentFrame
         private int frameNumber; //number of currentFrame
         /// <summary>
         /// useful when initializing  a collection of Videos
@@ -19,7 +18,6 @@ namespace McOverlapCore
         public Video()
         {
             frameNumber = 0;
-            frame = null;
             video = null;
 
         }
@@ -36,30 +34,24 @@ namespace McOverlapCore
         {
             frameNumber = 0;
             video = new Capture(filePath);
-            frame = null;
         }
         /// <summary>
         /// returns the next frame in the video or an emtpy mat if there is no next frame 
         /// </summary>
         /// <returns></returns>
-        public Mat NextFrame()
+        public bool NextFrame(Mat mat)
         {
-            Mat ret = new Mat();
+            
             if (video.Grab())
             {
-                video.Retrieve(ret);
+                video.Retrieve(mat);
                 frameNumber++;
+                return true;
             }
-            frame = ret;
-
-            return ret;
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        public Mat Frame
-        {
-            get { return frame; }
+            else
+            {
+                return false;
+            }
         }
         /// <summary>
         /// 

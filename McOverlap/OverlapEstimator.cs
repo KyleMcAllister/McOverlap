@@ -1,11 +1,12 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Util;
 using Emgu.CV.Features2D;
-using Emgu.CV.XFeatures2D;
 using System;
 using Emgu.CV.Structure;
 using Emgu.CV.UI;
 using System.Drawing;
+using System.Windows.Forms;
+using McOverlapCore.ImageProcessing;
 
 namespace McOverlap
 {
@@ -14,16 +15,7 @@ namespace McOverlap
 
         private MainUI form;
 
-        private String detectorType;
-
-        private Mat base_mat_gray;
-        private Mat po_mat_gray;
-
-        private VectorOfKeyPoint base_keypoints;
-        private VectorOfKeyPoint po_keypoints;
-
-        private Mat base_descriptors;
-        private Mat po_descriptors;
+        private Mat displayedOverlap;
 
         private VectorOfVectorOfDMatch kpMatches;
 
@@ -33,37 +25,17 @@ namespace McOverlap
 
         private Mat homography;
 
-        private Feature2D detector;
-        private Feature2D extractor;
-        private DescriptorMatcher matcher;
+        private KeypointDetector detector;
+        private DescriptorExtractor extractor;
+        private McOverlapCore.ImageProcessing.DescriptorMatcher matcher;
         
-        public OverlapEstimator(MainUI form, Mat base_mat, Mat po_mat, String detectorType, String extractorType, String matcherType)
+        public OverlapEstimator(MainUI form, DetectorType detectorType, ExtractorType extractorType, MatcherType matcherType)
         {
             this.form = form;
 
-            this.detectorType = detectorType;
-
             double resizeScale = form.resizeScale();
 
-            try
-            {
-                base_mat_gray = new Mat();
-                CvInvoke.Resize(base_mat, base_mat_gray, new Size(400, 300));
-                po_mat_gray = new Mat();
-                CvInvoke.Resize(po_mat, po_mat_gray, new Size(400, 300));
-               
-            }
-            catch
-            {
-
-            }
-            
-
-            this.base_keypoints = new VectorOfKeyPoint();
-            this.po_keypoints = new VectorOfKeyPoint();
-
-            this.base_descriptors = new Mat();
-            this.po_descriptors = new Mat();
+            displayedOverlap = new Mat();
 
             this.kpMatches = new VectorOfVectorOfDMatch();
 
@@ -73,94 +45,68 @@ namespace McOverlap
 
             this.homography = null;
 
-            switch (detectorType)
-            {
-                case "BRISK":
-                    detector = new Brisk(form.detectorBriskThreshold(), form.detectorBriskOctaveLayers(), form.detectorBriskPatternScale());
-                    break;
-
-                case "FAST":
-                    detector = new FastDetector(form.fastThreshold(), form.fastNonMaxSuppression(), form.fastDetectorType());
-                    break;
-
-                case "SURF":
-                    detector = new SURF(form.detectorSurfHessianThresh(), form.detectorSurfNumOctaves(), form.detectorSurfNumOctaveLevels(), form.detectorSurfExtended(), form.detectorSurfUpright());
-                    break;
-            }
-
-            switch (extractorType)
-            {
-                case "BRISK":
-                    extractor = new Brisk(form.extractorBriskThreshold(), form.extractorBriskOctaveLayers(), form.extractorBriskPatternScale());
-                    break;
-
-                case "BRIEF":
-                    extractor = new BriefDescriptorExtractor(form.briefDescriptorSize());
-                    break;
-
-                case "FREAK":
-                    extractor = new Freak(form.isFreakOrientationNormalized(), form.isFreakScaleNormalized(), form.freakPatternScale(), form.freakNumOctaves());
-                    break;
-
-                case "SURF":
-                    extractor = new SURF(form.extractorSurfHessianThreshold(), form.extractorSurfOctaves(), form.extractorSurfOctaveLayers(), form.extractorSurfExtended(), form.extractorSurfUpright());
-                    break;
-            }
-
-            switch (matcherType)
-            {
-                case "BRUTE FORCE":
-                    matcher = new BFMatcher(form.bruteforceMatcherType(), form.bruteForceCrosscheck());
-                    break;
-            }
+            detector = new KeypointDetector(detectorType);
+            extractor = new DescriptorExtractor(extractorType);
+            matcher = new McOverlapCore.ImageProcessing.DescriptorMatcher(matcherType);
 
         }
 
-        public double execute()
+        public double execute(McOverlapCore.Image baseImg, McOverlapCore.Image poImg)
         {
+
+            Mat reducedBase = new Mat();
+            Mat reducedPO = new Mat();
+
+            try
+            {
+                CvInvoke.Resize(baseImg.Mat, reducedBase, new Size(400, 300));
+                CvInvoke.Resize(poImg.Mat, reducedPO, new Size(400, 300));
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("failed to reduce images in overlap estiamtor");
+                MessageBox.Show(ex.ToString());
+            }
             
-           extractFeatures(base_mat_gray, base_keypoints, base_descriptors); //extract features from base image
-           extractFeatures(po_mat_gray, po_keypoints, po_descriptors); //extract features from potentially overlapping image        
+
+            McOverlapCore.Image reducedBaseImg = new McOverlapCore.Image(reducedBase.Split()[0]);
+            McOverlapCore.Image reducedPOImg = new McOverlapCore.Image(reducedPO.Split()[0]);
+
+
+            detector.DetectKeypoints(reducedBaseImg);
+            detector.DetectKeypoints(reducedPOImg);
+            extractor.ExtractDescriptors(reducedBaseImg);
+            extractor.ExtractDescriptors(reducedPOImg);
 
             /*ImageBox ib = form.getBaseImageBox();
             ib.Image = drawFeatures(base_mat_gray.ToMat(Emgu.CV.CvEnum.AccessType.ReadWrite), base_keypoints);
             ib = form.getPotentiallyOverlappingImageBox();
             ib.Image = drawFeatures(po_mat_gray.ToMat(Emgu.CV.CvEnum.AccessType.ReadWrite), po_keypoints);*/
 
+            kpMatches = matcher.MatchDescriptors(2, reducedBaseImg, reducedPOImg);
 
-            int toConinue = matchFeatures(base_mat_gray, base_descriptors, po_mat_gray, po_descriptors, kpMatches);
-
-            if (toConinue == -1)
+            if(kpMatches.Size == 0)
             {
                 System.Console.WriteLine("..problem..");
                 return 0;
             }
+            else
+            {
+                createHomography(reducedBaseImg, reducedPOImg, kpMatches);
+            }
 
 
-            return drawEstimatedOverlap();
+            return drawEstimatedOverlap(reducedBaseImg, reducedPOImg);
         }
 
-        public int extractFeatures(Mat mat, VectorOfKeyPoint vkp, Mat md)
+        public int createHomography(McOverlapCore.Image baseImg, McOverlapCore.Image poImg,VectorOfVectorOfDMatch matches)
         {
-
-            detector.DetectRaw(mat, vkp, null);
-            extractor.Compute(mat, vkp, md);
-
-            return 0;
-        }
-
-        public int matchFeatures(Mat mat1, Mat md1, Mat mat2, Mat md2, VectorOfVectorOfDMatch matches)
-        {
-
-            matcher.Add(md2);
 
             int nearestNeighbours = form.numNearestNeighbours();
             
 
             try
-            {
-                matcher.KnnMatch(md1, matches, nearestNeighbours, null);
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            { 
                 maskMatches = new Mat(matches.Size, 1, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
                 maskMatches.SetTo(new MCvScalar(255));
 
@@ -176,13 +122,13 @@ namespace McOverlap
                     double scaleIncrement = form.scaleIncrement();
                     int rotationBins = form.numRotationBins();
 
-                    nonZeroCount = Features2DToolbox.VoteForSizeAndOrientation(po_keypoints, base_keypoints, matches, maskMatches, scaleIncrement, rotationBins);
+                    nonZeroCount = Features2DToolbox.VoteForSizeAndOrientation(poImg.Keypoints, baseImg.Keypoints, matches, maskMatches, scaleIncrement, rotationBins);
 
                     if(nonZeroCount >= 4)
                     {
                         double ransacReprojectionThreshold = form.ransacReprojThreshold();
 
-                        homography = Features2DToolbox.GetHomographyMatrixFromMatchedFeatures(po_keypoints, base_keypoints, matches, maskMatches, ransacReprojectionThreshold);
+                        homography = Features2DToolbox.GetHomographyMatrixFromMatchedFeatures(poImg.Keypoints, baseImg.Keypoints, matches, maskMatches, ransacReprojectionThreshold);
                     }
                     
                 }
@@ -191,8 +137,9 @@ namespace McOverlap
 
                 return 0;
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.ToString());
                 return -1;
             }
 
@@ -200,25 +147,15 @@ namespace McOverlap
             
         }
 
-        public Mat drawFeatures(Mat mat, VectorOfKeyPoint vkp)
-        {
-            Features2DToolbox.DrawKeypoints(mat,vkp,mat, new Bgr(System.Drawing.Color.Green),Features2DToolbox.KeypointDrawType.Default);
-
-            return mat;
-        }
-
-        public double drawEstimatedOverlap()
+        public double drawEstimatedOverlap(McOverlapCore.Image baseImg, McOverlapCore.Image poImg)
         {
 
             double overlap = 0;
-            //Features2DToolbox.DrawMatches(po_mat_gray, po_keypoints, base_mat_gray, base_keypoints, kpMatches, result, new MCvScalar(255, 255, 255), new MCvScalar(255, 255, 255), maskMatches);
-
-
 
             if (homography != null)
             {
                 //draw a rectangle along the projected model
-                Rectangle rect = new Rectangle(Point.Empty, po_mat_gray.Size);
+                Rectangle rect = new Rectangle(Point.Empty, poImg.Mat.Size);
                 PointF[] pts = new PointF[]
                 {
                   new PointF(rect.Left, rect.Bottom),
@@ -235,12 +172,13 @@ namespace McOverlap
                 using (VectorOfPoint vp = new VectorOfPoint(points))
                 {
 
-                    CvInvoke.Polylines(base_mat_gray, vp, true, new MCvScalar(255, 255, 0, 255), 0);
+                    baseImg.Mat.CopyTo(displayedOverlap);
+                    CvInvoke.Polylines(displayedOverlap, vp, true, new MCvScalar(255, 255, 0, 255), 0);
 
                 }
 
                 ///////////////////////////////////////////////////////
-                Rectangle rect_border = new Rectangle(Point.Empty, base_mat_gray.Size);
+                Rectangle rect_border = new Rectangle(Point.Empty, baseImg.Mat.Size);
                 PointF[] borderPts = new PointF[]
                 {
                   new PointF(rect.Left, rect.Bottom),
@@ -251,15 +189,17 @@ namespace McOverlap
 
                 Point[] borderPoints = Array.ConvertAll<PointF, Point>(borderPts, Point.Round);
 
-                IntersectionRegion2Point0 ir = new IntersectionRegion2Point0(borderPoints, points);
+                IntersectionRegion ir = new IntersectionRegion(borderPoints, points);
                 overlap = ir.ComputeIntersectionRegionArea();
                 overlap = Math.Round(overlap);
 
                 if (form.drawImages())
                 {
                     ImageBox ib = form.getEstimatedOverlapImageBox();
-                    ib.Image = base_mat_gray.ToImage<Gray, byte>().Resize(ib.Width, ib.Height, Emgu.CV.CvEnum.Inter.Linear);
+                    CvInvoke.Resize(displayedOverlap, displayedOverlap, new Size(ib.Width, ib.Height));
+                    ib.Image = displayedOverlap;
                 }
+
 
                 return overlap;
 
@@ -270,33 +210,14 @@ namespace McOverlap
             }
         }
 
-        public VectorOfKeyPoint getBase_keypoints()
-        {
-            return base_keypoints;
-        }
-
-        public VectorOfKeyPoint getPO_keypoints()
-        {
-            return po_keypoints;
-        }
-
         public void Dispose()
         {
-            base_mat_gray.Dispose();
-            base_keypoints.Dispose();
-            base_descriptors.Dispose();
-            po_mat_gray.Dispose();
-            po_keypoints.Dispose();
-            po_descriptors.Dispose();
             kpMatches.Dispose();
             maskMatches.Dispose();
             if(homography != null)
             {
                 homography.Dispose();
             }
-            detector.Dispose();
-            extractor.Dispose();
-            matcher.Dispose();
             result.Dispose();
         }        
     }

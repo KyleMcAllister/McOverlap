@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 
 namespace McOverlapCore.ImageProcessing
 {
-    public enum EDetectorType
+    public enum MatcherType
     {
-        BRISK,
-        FAST,
+        HAMMING,
+        HAMMING2,
+        INF,
+        L1,
+        L2,
+        L2SQR,
         NULL
     }
 }

@@ -71,6 +71,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -82,13 +83,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImageProcessing\ClipToHalfPlaneAction.cs" />
+    <Compile Include="ImageProcessing\IntersectionRegion.cs" />
     <Compile Include="Video.cs" />
-    <Compile Include="ImageProcessing\EMatcherType.cs" />
+    <Compile Include="ImageProcessing\MatcherType.cs" />
     <Compile Include="ImageProcessing\DescriptorMatcher.cs" />
     <Compile Include="ImageProcessing\DescriptorExtractor.cs" />
     <Compile Include="ImageProcessing\KeypointDetector.cs" />
-    <Compile Include="ImageProcessing\EExtractorType.cs" />
-    <Compile Include="ImageProcessing\EDetectorType.cs" />
+    <Compile Include="ImageProcessing\ExtractorType.cs" />
+    <Compile Include="ImageProcessing\DetectorType.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

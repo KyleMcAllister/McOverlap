@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace McOverlapCore.ImageProcessing
 {
-    public enum EExtractorType
+    public enum DetectorType
     {
-        BRIEF,
         BRISK,
-        FREAK,
+        FAST,
         NULL
     }
 }

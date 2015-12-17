@@ -12,18 +12,18 @@ namespace McOverlapCore.ImageProcessing
 {
     public class DescriptorExtractor
     {
-        private EExtractorType type;
+        private ExtractorType type;
         private Feature2D extractor;
         /// <summary>
         /// useful when initialising a collection of descriptor extractors
         /// </summary>
         public DescriptorExtractor()
         {
-            type = EExtractorType.NULL;
+            type = ExtractorType.NULL;
             extractor = null;
         }
 
-        public DescriptorExtractor(EExtractorType type)
+        public DescriptorExtractor(ExtractorType type)
         {
             this.type = type;
             extractor = CreateExtractor(type);
@@ -35,34 +35,34 @@ namespace McOverlapCore.ImageProcessing
         /// <param name="mat"></param>
         /// <param name="keypoints"></param>
         /// <returns></returns>
-        public Mat ExtractDescriptors(Image img)
+        public bool ExtractDescriptors(Image img)
         {
-            Mat ret = new Mat(); //the descriptors to return
             if(!img.Mat.IsEmpty && img.Keypoints.Size != 0)
             {
-                extractor.Compute(img.Mat, img.Keypoints, ret);
+                extractor.Compute(img.Mat, img.Keypoints, img.Descriptors);
+                return true;
             }
-            return ret;
+            return false;
         }
         /// <summary>
         /// creates a descriptor extractor based off the type that is passed
         /// </summary>
         /// <param name="type"></param>
-        private Feature2D CreateExtractor(EExtractorType type)
+        private Feature2D CreateExtractor(ExtractorType type)
         {
             Feature2D ret = null; //the extractor to return
             switch (type)
             {
-                case EExtractorType.BRIEF:
+                case ExtractorType.BRIEF:
                     ret = new BriefDescriptorExtractor();
                     break;
-                case EExtractorType.BRISK:
+                case ExtractorType.BRISK:
                     ret = new Brisk();
                     break;
-                case EExtractorType.FREAK:
+                case ExtractorType.FREAK:
                     ret = new Freak();
                     break;
-                case EExtractorType.NULL:
+                case ExtractorType.NULL:
                     ret = null;
                     break;
             }
@@ -73,7 +73,7 @@ namespace McOverlapCore.ImageProcessing
         /// get - returns the type of extractor that has been initialized
         /// set - used to change the type of extractor that is used
         /// </summary>
-        public EExtractorType Type
+        public ExtractorType Type
         {
             get { return type; }
             set

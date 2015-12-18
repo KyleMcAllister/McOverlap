@@ -229,25 +229,25 @@ namespace McOverlapCore.ImageProcessing
                 for (int i = 0; i < blueLines.Count; i++)
                 {
                     LineSegment2D line = blueLines[i];
-                    String result = "";
+                    //String result = "";
                     switch (ClipToHalfPlaneAction(halfPlane, line))
                         {
                             case ImageProcessing.ClipToHalfPlaneAction.DISCARD_LINE:
-                                result = "remove blue line";
+                                //result = "remove blue line";
                             blueLines.Remove(line);
                                 i--;
                                 break;
                             case ImageProcessing.ClipToHalfPlaneAction.DO_NOTHING:
-                                result = "do nothing";
+                                //result = "do nothing";
                                 //do nothing..
                                 break;
                             case ImageProcessing.ClipToHalfPlaneAction.UPDATE_END:
-                                result = "update end of blue line";
+                                //result = "update end of blue line";
                                 line.P2 = Intersection(halfPlane, line);
                             blueLines[i] = line;
                                 break;
                             case ImageProcessing.ClipToHalfPlaneAction.UPDATE_START:
-                                result = "update start of blue line";
+                                //result = "update start of blue line";
                                 line.P1 = Intersection(halfPlane, line);
                             blueLines[i] = line;
                                 break;

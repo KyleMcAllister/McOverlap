@@ -119,6 +119,7 @@ namespace McOverlap
                 catch(IndexOutOfRangeException ex)
                 {
                     Console.WriteLine("..problem..");
+                    MessageBox.Show(ex.ToString());
                     return -1;
                 }
 
@@ -221,6 +222,7 @@ namespace McOverlap
         {
             kpMatches.Dispose();
             maskMatches.Dispose();
+            displayedOverlap.Dispose();
             if(homography != null)
             {
                 homography.Dispose();

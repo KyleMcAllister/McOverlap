@@ -85,7 +85,6 @@
   <ItemGroup>
     <Compile Include="ImageProcessing\ClipToHalfPlaneAction.cs" />
     <Compile Include="ImageProcessing\IntersectionRegion.cs" />
-    <Compile Include="Video.cs" />
     <Compile Include="ImageProcessing\MatcherType.cs" />
     <Compile Include="ImageProcessing\DescriptorMatcher.cs" />
     <Compile Include="ImageProcessing\DescriptorExtractor.cs" />

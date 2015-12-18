@@ -147,9 +147,9 @@
             // 
             // loadPOImageBtn
             // 
-            this.loadPOImageBtn.Location = new System.Drawing.Point(858, 349);
+            this.loadPOImageBtn.Location = new System.Drawing.Point(858, 358);
             this.loadPOImageBtn.Name = "loadPOImageBtn";
-            this.loadPOImageBtn.Size = new System.Drawing.Size(75, 48);
+            this.loadPOImageBtn.Size = new System.Drawing.Size(75, 45);
             this.loadPOImageBtn.TabIndex = 8;
             this.loadPOImageBtn.Text = "Load PO_Image";
             this.loadPOImageBtn.UseVisualStyleBackColor = true;
@@ -328,7 +328,7 @@
             // 
             // poImagePathTB
             // 
-            this.poImagePathTB.Location = new System.Drawing.Point(624, 352);
+            this.poImagePathTB.Location = new System.Drawing.Point(624, 358);
             this.poImagePathTB.Multiline = true;
             this.poImagePathTB.Name = "poImagePathTB";
             this.poImagePathTB.Size = new System.Drawing.Size(228, 45);
@@ -662,9 +662,9 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(858, 554);
+            this.progressBar1.Location = new System.Drawing.Point(641, 554);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(75, 31);
+            this.progressBar1.Size = new System.Drawing.Size(292, 31);
             this.progressBar1.TabIndex = 67;
             this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
             // 

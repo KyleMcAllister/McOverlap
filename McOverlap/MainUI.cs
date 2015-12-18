@@ -17,6 +17,7 @@ namespace McOverlap
         private OpenFileDialog opf = new OpenFileDialog();
         private FolderBrowserDialog fbd = new FolderBrowserDialog();
 
+        private String lastFileDirectory = "";
 
         private DirectoryInfo base_di = null;
         private DirectoryInfo po_di = null;
@@ -57,13 +58,19 @@ namespace McOverlap
             matcherTypeTB.Text = matcherType.ToString();
 
             Text = "McOverlap (|___|)";
-
         }
 
         //Load Base Image Button:
         private void button1_Click(object sender, EventArgs e)
         {
+            if(lastFileDirectory != "")
+            {
+                opf.InitialDirectory = lastFileDirectory;
+            }
+
             if (opf.ShowDialog() == DialogResult.OK){
+                FileInfo fi = new FileInfo(opf.FileName);
+                lastFileDirectory = fi.DirectoryName;
                 baseImagePathTB.Text = opf.FileName;
                 baseImg = new Image(opf.FileName);
                 if (drawImages())
@@ -79,8 +86,15 @@ namespace McOverlap
         //Load Potentially Overlapping Image Button:
         private void button2_Click(object sender, EventArgs e)
         {
+            if (lastFileDirectory != "")
+            {
+                opf.InitialDirectory = lastFileDirectory;
+            }
+
             if (opf.ShowDialog() == DialogResult.OK)
             {
+                FileInfo fi = new FileInfo(opf.FileName);
+                lastFileDirectory = fi.DirectoryName;
                 poImagePathTB.Text = opf.FileName;
                 poImg = new Image(opf.FileName);
                 if (drawImages())
@@ -321,6 +335,7 @@ namespace McOverlap
 
         private void button9_Click(object sender, EventArgs e)
         {
+            
             if (fbd.ShowDialog() == DialogResult.OK)
             {
                 doAll_di = new DirectoryInfo(fbd.SelectedPath);
@@ -332,14 +347,45 @@ namespace McOverlap
 
         private void button8_Click(object sender, EventArgs e)
         {
+
+            int totalImagesProcessed = 0;
+            int totalImagesExtracted = 0;
+            int totalFailedMatches = 0;
+
+            String outputDirectory = doAll_di.FullName + "_extracted_" + getOverlap() + "_" + detectorType + "_" + extractorType + "_" + matcherType;
+            //check if directory already exists:
+            //if it does: create a new one appending some counter to the name
+
+            int i = 1;
+
+            String outputDirectorySuffix = "";
+
+            foreach(DirectoryInfo di in doAll_di.Parent.GetDirectories())
+            {
+                MessageBox.Show(di.FullName + "\r\n" + (outputDirectory + outputDirectorySuffix));
+                if (di.FullName == (outputDirectory + outputDirectorySuffix))
+                {
+                    outputDirectorySuffix = "(" + i + ")";
+                    i++;
+                }
+            }
+
+            outputDirectory += outputDirectorySuffix;
+
+            int currentSequenceNumber = 0;
+
             progressBar1.Value = 0;
             getConsoleTB().Text = "";
             double start = System.DateTime.Now.TimeOfDay.TotalMilliseconds;
-            extracted_di = Directory.CreateDirectory(doAll_di.FullName + "_extracted_" + getOverlap() + "_" + detectorType + "_" + extractorType + "_" + matcherType);
+
+            MessageBox.Show(outputDirectory);
+
+            extracted_di = Directory.CreateDirectory(outputDirectory);
             DirectoryInfo probFrames_di = Directory.CreateDirectory(extracted_di.FullName + "/" + "problem frames");
 
             FileInfo baseFi = doAll_di.GetFiles()[0]; //get first file
             File.Copy(baseFi.FullName, extracted_di.FullName + "/" + baseFi.Name); //extract file to dir
+            totalImagesExtracted++;
             baseImg = new Image(baseFi.FullName);
             if (drawImages())
             {
@@ -351,8 +397,6 @@ namespace McOverlap
             baseImagePathTB.Text = baseFi.FullName;
             bool fileExists = false;
             FileInfo prevFi = baseFi;
-
-            
 
             foreach (FileInfo fi in doAll_di.GetFiles())
             {
@@ -379,6 +423,8 @@ namespace McOverlap
                         {
                             //clearly something went wrong, abandon frame
                             //save base image in prob files
+
+                            totalFailedMatches++;
 
                             bool baseFileExists = false;
                             bool poFileExists = false;
@@ -417,6 +463,7 @@ namespace McOverlap
                             }
 
                             baseImagePathTB.Text = baseFi.FullName;
+                            totalImagesProcessed++;
                             continue;
                         }
                         foreach (FileInfo fi2 in extracted_di.GetFiles())
@@ -429,10 +476,10 @@ namespace McOverlap
                         if (!fileExists)
                         {
                             File.Copy(prevFi.FullName, extracted_di.FullName + "/" + prevFi.Name); //extract file to dir
+                            totalImagesExtracted++;
                         }
                         baseFi = prevFi;
                         baseImg = new Image(prevFi.FullName);
-
                         overlapEstimator = new OverlapEstimator(this, detectorType, extractorType, matcherType);
                         overlap = overlapEstimator.execute(baseImg, poImg);
                         ConsoleOutputTB.AppendText(baseFi.Name + " : " + fi.Name + " has " + overlap + "% overlap" + "\r\n");
@@ -451,6 +498,7 @@ namespace McOverlap
                             if (!poFileExists)
                             {
                                 File.Copy(fi.FullName, extracted_di.FullName + "/" + fi.Name); //extract file to dir
+                                totalImagesExtracted++;
                             }
                         }
 
@@ -460,6 +508,8 @@ namespace McOverlap
                             CvInvoke.Resize(baseImg.Mat, displayedBase, new System.Drawing.Size(ib.Width, ib.Height));
                             ib.Image = displayedBase;
                         }
+
+                        
 
                         baseImagePathTB.Text = prevFi.FullName;
                     }
@@ -477,6 +527,8 @@ namespace McOverlap
 
                 prevFi = fi;
 
+                totalImagesProcessed++;
+
             }
 
 
@@ -487,6 +539,9 @@ namespace McOverlap
             double time = Math.Round(((end - start) / 1000)/60);
 
             StreamWriter sw = new StreamWriter(File.Create(extracted_di.FullName + "/" + "output.txt"));
+            sw.WriteLine("Images Processes: " + totalImagesProcessed);
+            sw.WriteLine("Images Extracted: " + totalImagesExtracted);
+            sw.WriteLine("Failed Matches: " + totalFailedMatches);
             sw.Write(getConsoleTB().Text);
             sw.Close();
 
@@ -512,9 +567,19 @@ namespace McOverlap
 
         private void button10_Click(object sender, EventArgs e)
         {
+            if (lastFileDirectory != "")
+            {
+                opf.InitialDirectory = lastFileDirectory;
+            }
             if (opf.ShowDialog() == DialogResult.OK)
             {
                 videoFi = new FileInfo(opf.FileName);
+
+                
+                
+                
+
+                lastFileDirectory = videoFi.DirectoryName;
                 if(videoFi.Extension.ToLower() == ".mp4")
                 {
                     textBox8.Text = videoFi.FullName;
@@ -530,10 +595,53 @@ namespace McOverlap
         private void button11_Click(object sender, EventArgs e)
         {
 
+            int totalFramesProcessed = 1;
+            int totalFramesExtracted = 0;
+            int totalFailedMatches = 0;
+
+            //find frame rate: gopro asserts 24 frames per second..
+            //can have user input frames per second and length in seconds
+            //then give an estimate on completion time
+
+            //double fps = 24;
+            //double lengthInSeconds = 194;
+            //double percentageCompleted = (totalFramesProcessed / (fps * lengthInSeconds))*100;
+
+            //what about time remaining??:
+
+            String outputDirectory = videoFi.DirectoryName + "\\" + videoFi.Name.Split('.')[0] + "_extracted_frames_" + detectorType + "_" + extractorType + "_" + matcherType + "_" + getOverlap();
+            //check if directory already exists:
+            //if it does: create a new one appending some counter to the name
+
+            int i2 = 1;
+
+            String outputDirectorySuffix = "";
+
+            DirectoryInfo videoDirIn = videoFi.Directory;
+
+            foreach (DirectoryInfo di2 in videoDirIn.GetDirectories())
+            {
+                if (di2.FullName == (outputDirectory + outputDirectorySuffix))
+                {
+                    outputDirectorySuffix = "(" + i2 + ")";
+                    i2++;
+                }
+            }
+
+            outputDirectory += outputDirectorySuffix;
+
+            //check if directory already exists:
+            //if it does: create a new one appending some counter to the name
+
+            int currentSequenceNumber = 0;
+
             progressBar1.Value = 0;
 
             getConsoleTB().Text = "";
-            DirectoryInfo di = Directory.CreateDirectory(videoFi.DirectoryName + "/" + videoFi.Name.Split('.')[0] + "_extracted_frames_" + detectorType + "_" + extractorType + "_" + matcherType + "_" + getOverlap());
+
+            MessageBox.Show(outputDirectory);
+
+            DirectoryInfo di = Directory.CreateDirectory(outputDirectory);
             DirectoryInfo probFrames_di = Directory.CreateDirectory(di.FullName + "/" + "problem frames");
 
             Capture capture = new Capture(videoFi.FullName);
@@ -581,7 +689,11 @@ namespace McOverlap
             double start = DateTime.Now.TimeOfDay.TotalMinutes;
             while (capture.Grab())
             {
+                //percentageCompleted = ((totalFramesProcessed / (fps * lengthInSeconds))) * 100;
+                //percentageCompleted = Math.Round(percentageCompleted);
+                //progressBar1.Value = (int)percentageCompleted;
                 progressBar1.Value = (progressBar1.Value + 10) % 100;
+
                 i++;
                 capture.Retrieve(poframe.Mat);
                 poImagePathTB.Text = "Frame number: " + i + "";
@@ -606,7 +718,7 @@ namespace McOverlap
                             if (overlap == 0)
                             {
                                 //clearly something went wrong, abandon frame
-
+                                totalFailedMatches++;
                                 bool baseFrameExists = false;
                                 bool poFrameExists = false;
 
@@ -643,6 +755,7 @@ namespace McOverlap
                                     ib.Image = displayedBase;
                                 }
                                 baseImagePathTB.Text = "Frame number: " + i + "";
+                                totalFramesProcessed++;
                                 continue;
                             }
 
@@ -673,8 +786,9 @@ namespace McOverlap
                             if (!frameExists)
                             {
                                 CvInvoke.Imwrite(frameFileName, baseframe.Mat);
+                            totalFramesExtracted++;
                             }
-
+                        baseImagePathTB.Text = "Frame number: " + i + "";
                         overlapEstimator = new OverlapEstimator(this, detectorType, extractorType, matcherType);
                         overlap = overlapEstimator.execute(baseframe, poframe);
                         ConsoleOutputTB.AppendText(baseImagePathTB.Text + " | " + poImagePathTB.Text + " has " + overlap + "% overlap" + "\r\n");
@@ -696,6 +810,7 @@ namespace McOverlap
                             if (!poFileExists)
                             {
                                 CvInvoke.Imwrite(frameFileName, poframe.Mat);
+                                totalFramesExtracted++;
                             }
                         }
 
@@ -719,7 +834,7 @@ namespace McOverlap
 
                 Application.DoEvents();
                 poframe.Mat.CopyTo(prevFrame.Mat);
-
+                totalFramesProcessed++;
             }
             double end = DateTime.Now.TimeOfDay.TotalMinutes;
 
@@ -730,6 +845,9 @@ namespace McOverlap
             getConsoleTB().AppendText(finalOutput + "\r\n");
 
             StreamWriter sw = new StreamWriter(File.Create(di.FullName + "/" + "output.txt"));
+            sw.WriteLine("Frames Processes: " + totalFramesProcessed);
+            sw.WriteLine("Frames Extracted: " + totalFramesExtracted);
+            sw.WriteLine("Failed Matches: " + totalFailedMatches);
             sw.Write(getConsoleTB().Text);
             sw.Close();
 

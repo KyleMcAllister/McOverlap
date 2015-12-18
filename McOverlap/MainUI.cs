@@ -42,8 +42,8 @@ namespace McOverlap
         {
             InitializeComponent();
             CenterToScreen();
-            imageBox1.FunctionalMode = ImageBox.FunctionalModeOption.PanAndZoom;
-            imageBox2.FunctionalMode = ImageBox.FunctionalModeOption.PanAndZoom;
+            baseImageIB.FunctionalMode = ImageBox.FunctionalModeOption.PanAndZoom;
+            estimatedOverlapIB.FunctionalMode = ImageBox.FunctionalModeOption.PanAndZoom;
             imageBox3.FunctionalMode = ImageBox.FunctionalModeOption.PanAndZoom;
 
             //set default detector, extractor and matcher types:
@@ -56,13 +56,15 @@ namespace McOverlap
             extractorTypeTB.Text = extractorType.ToString();
             matcherTypeTB.Text = matcherType.ToString();
 
+            Text = "McOverlap (|___|)";
+
         }
 
         //Load Base Image Button:
         private void button1_Click(object sender, EventArgs e)
         {
             if (opf.ShowDialog() == DialogResult.OK){
-                textBox13.Text = opf.FileName;
+                baseImagePathTB.Text = opf.FileName;
                 baseImg = new Image(opf.FileName);
                 if (drawImages())
                 {
@@ -79,7 +81,7 @@ namespace McOverlap
         {
             if (opf.ShowDialog() == DialogResult.OK)
             {
-                textBox14.Text = opf.FileName;
+                poImagePathTB.Text = opf.FileName;
                 poImg = new Image(opf.FileName);
                 if (drawImages())
                 {
@@ -98,14 +100,14 @@ namespace McOverlap
             {
                 double dblOverlap = overlapEstimator.execute(baseImg, poImg);
                 String s = "..Success.." + "\n" + "..estimated overlap is.." + dblOverlap;
-                textBox1.AppendText(s);
+                ConsoleOutputTB.AppendText(s);
             }
             
         }
 
         public ImageBox getBaseImageBox()
         {
-            return imageBox1;
+            return baseImageIB;
         }
 
         public ImageBox getPotentiallyOverlappingImageBox()
@@ -115,17 +117,17 @@ namespace McOverlap
 
         public ImageBox getEstimatedOverlapImageBox()
         {
-            return imageBox2;
+            return estimatedOverlapIB;
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            if(textBox13.Text == "")
+            if(baseImagePathTB.Text == "")
             {
                 return; //don't need to do anything
             }
 
-            String base_image_path = textBox13.Text;
+            String base_image_path = baseImagePathTB.Text;
 
             if(base_di == null)
             {
@@ -141,7 +143,7 @@ namespace McOverlap
 
                 if (getfile)
                 {
-                    textBox13.Text = fi.FullName;
+                    baseImagePathTB.Text = fi.FullName;
                     baseImg = new Image(fi.FullName);
                     if (drawImages())
                     {
@@ -162,12 +164,12 @@ namespace McOverlap
 
         private void button7_Click(object sender, EventArgs e)
         {
-            if (textBox14.Text == "")
+            if (poImagePathTB.Text == "")
             {
                 return; //don't need to do anything
             }
 
-            String po_image_path = textBox14.Text;
+            String po_image_path = poImagePathTB.Text;
 
             if (po_di == null)
             {
@@ -183,7 +185,7 @@ namespace McOverlap
 
                 if (getfile)
                 {
-                    textBox14.Text = fi.FullName;
+                    poImagePathTB.Text = fi.FullName;
                     poImg = new Image(fi.FullName);
                     if (drawImages())
                     {
@@ -203,12 +205,12 @@ namespace McOverlap
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if (textBox13.Text == "")
+            if (baseImagePathTB.Text == "")
             {
                 return; //don't need to do anything
             }
 
-            String base_image_path = textBox13.Text;
+            String base_image_path = baseImagePathTB.Text;
 
             if (base_di == null)
             {
@@ -228,7 +230,7 @@ namespace McOverlap
                         return; //nothing to do
                     }
 
-                    textBox13.Text = prevfi.FullName;
+                    baseImagePathTB.Text = prevfi.FullName;
                     baseImg = new Image(prevfi.FullName);
                     if (drawImages())
                     {
@@ -246,12 +248,12 @@ namespace McOverlap
 
         private void button6_Click(object sender, EventArgs e)
         {
-            if (textBox14.Text == "")
+            if (poImagePathTB.Text == "")
             {
                 return; //don't need to do anything
             }
 
-            String po_image_path = textBox14.Text;
+            String po_image_path = poImagePathTB.Text;
 
             if (po_di == null)
             {
@@ -271,7 +273,7 @@ namespace McOverlap
                         return; //nothing to do
                     }
 
-                    textBox14.Text = prevfi.FullName;
+                    poImagePathTB.Text = prevfi.FullName;
                     poImg = new Image(prevfi.FullName);
                     if (drawImages())
                     {
@@ -336,8 +338,6 @@ namespace McOverlap
             extracted_di = Directory.CreateDirectory(doAll_di.FullName + "_extracted_" + getOverlap() + "_" + detectorType + "_" + extractorType + "_" + matcherType);
             DirectoryInfo probFrames_di = Directory.CreateDirectory(extracted_di.FullName + "/" + "problem frames");
 
-            Text = "Output Directory: " + extracted_di.Name;
-
             FileInfo baseFi = doAll_di.GetFiles()[0]; //get first file
             File.Copy(baseFi.FullName, extracted_di.FullName + "/" + baseFi.Name); //extract file to dir
             baseImg = new Image(baseFi.FullName);
@@ -348,7 +348,7 @@ namespace McOverlap
                 ib.Image = displayedBase;
             }
 
-            textBox13.Text = baseFi.FullName;
+            baseImagePathTB.Text = baseFi.FullName;
             bool fileExists = false;
             FileInfo prevFi = baseFi;
 
@@ -357,9 +357,9 @@ namespace McOverlap
             foreach (FileInfo fi in doAll_di.GetFiles())
             {
 
-                progressBar1.Value = (progressBar1.Value + 10) % 99;
+                progressBar1.Value = (progressBar1.Value + 10) % 100;
                 poImg = new Image(fi.FullName);
-                textBox14.Text = fi.FullName;
+                poImagePathTB.Text = fi.FullName;
                 try
                 {
 
@@ -372,16 +372,41 @@ namespace McOverlap
 
                     overlapEstimator = new OverlapEstimator(this, detectorType, extractorType, matcherType);
                     double overlap = overlapEstimator.execute(baseImg, poImg);
-                    textBox1.AppendText(baseFi.Name + " : " + fi.Name + " has " + overlap + "% overlap" + "\r\n");
+                    ConsoleOutputTB.AppendText(baseFi.Name + " : " + fi.Name + " has " + overlap + "% overlap" + "\r\n");
                     if (overlap <= getOverlap())
                     {
                         if (overlap == 0)
                         {
                             //clearly something went wrong, abandon frame
                             //save base image in prob files
-                            File.Copy(baseFi.FullName, probFrames_di.FullName + "/" + baseFi.Name);
-                            //save po image in prob files
-                            File.Copy(fi.FullName, probFrames_di.FullName + "/" + fi.Name);
+
+                            bool baseFileExists = false;
+                            bool poFileExists = false;
+
+                            foreach(FileInfo fi3 in probFrames_di.GetFiles())
+                            {
+                                if(fi3.Name == baseFi.Name)
+                                {
+                                    baseFileExists = true;
+                                }
+                                if(fi3.Name == fi.Name)
+                                {
+                                    poFileExists = true;
+                                }
+                                if(baseFileExists && poFileExists)
+                                {
+                                    break;
+                                }
+                            }
+                            if (!baseFileExists)
+                            {
+                                File.Copy(baseFi.FullName, probFrames_di.FullName + "/" + baseFi.Name);
+                            }
+                            if (!poFileExists)
+                            {
+                                File.Copy(fi.FullName, probFrames_di.FullName + "/" + fi.Name);
+                            }
+                            
                             baseFi = fi;
                             baseImg = new Image(fi.FullName);
                             if (drawImages())
@@ -391,22 +416,43 @@ namespace McOverlap
                                 ib.Image = displayedBase;
                             }
 
-                            textBox13.Text = baseFi.FullName;
+                            baseImagePathTB.Text = baseFi.FullName;
                             continue;
                         }
                         foreach (FileInfo fi2 in extracted_di.GetFiles())
                         {
-                            if (fi.Name == fi2.Name)
+                            if (prevFi.Name == fi2.Name)
                             {
                                 fileExists = true;
                             }
                         }
                         if (!fileExists)
                         {
-                            File.Copy(prevFi.FullName, extracted_di.FullName + "/" + fi.Name); //extract file to dir
+                            File.Copy(prevFi.FullName, extracted_di.FullName + "/" + prevFi.Name); //extract file to dir
                         }
                         baseFi = prevFi;
                         baseImg = new Image(prevFi.FullName);
+
+                        overlapEstimator = new OverlapEstimator(this, detectorType, extractorType, matcherType);
+                        overlap = overlapEstimator.execute(baseImg, poImg);
+                        ConsoleOutputTB.AppendText(baseFi.Name + " : " + fi.Name + " has " + overlap + "% overlap" + "\r\n");
+                        if ( overlap <= getOverlap())
+                        {
+                            //save current potentially overlapping image as well:
+                            bool poFileExists = false;
+                            foreach(FileInfo fileInfo2 in extracted_di.GetFiles())
+                            {
+                                if(fileInfo2.Name == fi.Name)
+                                {
+                                    poFileExists = true;
+                                    break;
+                                }
+                            }
+                            if (!poFileExists)
+                            {
+                                File.Copy(fi.FullName, extracted_di.FullName + "/" + fi.Name); //extract file to dir
+                            }
+                        }
 
                         if (drawImages())
                         {
@@ -415,7 +461,7 @@ namespace McOverlap
                             ib.Image = displayedBase;
                         }
 
-                        textBox13.Text = prevFi.FullName;
+                        baseImagePathTB.Text = prevFi.FullName;
                     }
                 }
                 catch (Exception ex)
@@ -434,9 +480,11 @@ namespace McOverlap
             }
 
 
-            textBox1.AppendText("..Success..");
+            ConsoleOutputTB.AppendText("..Success..");
             double end = System.DateTime.Now.TimeOfDay.TotalMilliseconds;
-            textBox1.AppendText((end - start) / 1000 + "");
+            ConsoleOutputTB.AppendText((end - start) / 1000 + "");
+
+            double time = Math.Round(((end - start) / 1000)/60);
 
             StreamWriter sw = new StreamWriter(File.Create(extracted_di.FullName + "/" + "output.txt"));
             sw.Write(getConsoleTB().Text);
@@ -444,12 +492,12 @@ namespace McOverlap
 
             progressBar1.Value = 100;
 
-            MessageBox.Show("Done in " + ((end - start) / 1000) / 60 + " minutes");
+            MessageBox.Show("Done in " + time + " minutes" + "\r\n" + "Output Directory: " + "\r\n" + extracted_di.FullName, "Report");
         }
 
         public TextBox getConsoleTB()
         {
-            return textBox1;
+            return ConsoleOutputTB;
         }
 
         public bool drawImages()
@@ -487,7 +535,6 @@ namespace McOverlap
             getConsoleTB().Text = "";
             DirectoryInfo di = Directory.CreateDirectory(videoFi.DirectoryName + "/" + videoFi.Name.Split('.')[0] + "_extracted_frames_" + detectorType + "_" + extractorType + "_" + matcherType + "_" + getOverlap());
             DirectoryInfo probFrames_di = Directory.CreateDirectory(di.FullName + "/" + "problem frames");
-            Text = "Ouput Directory: " + di.Name;
 
             Capture capture = new Capture(videoFi.FullName);
 
@@ -525,7 +572,7 @@ namespace McOverlap
                 ib.Image = displayedBase;
             }
             
-            textBox13.Text = "Frame number: " + i + "";
+            baseImagePathTB.Text = "Frame number: " + i + "";
 
             
 
@@ -534,10 +581,10 @@ namespace McOverlap
             double start = DateTime.Now.TimeOfDay.TotalMinutes;
             while (capture.Grab())
             {
-                progressBar1.Value = (progressBar1.Value + 10) % 99;
+                progressBar1.Value = (progressBar1.Value + 10) % 100;
                 i++;
                 capture.Retrieve(poframe.Mat);
-                textBox14.Text = "Frame number: " + i + "";
+                poImagePathTB.Text = "Frame number: " + i + "";
 
                 if (drawImages())
                 {
@@ -552,25 +599,51 @@ namespace McOverlap
                     try {
                     overlapEstimator = new OverlapEstimator(this, detectorType, extractorType, matcherType);
                     double overlap = overlapEstimator.execute(baseframe, poframe);
-                        getConsoleTB().AppendText(textBox13.Text + " | " + textBox14.Text + " has " + overlap + "% overlap" + "\r\n");
+                        getConsoleTB().AppendText(baseImagePathTB.Text + " | " + poImagePathTB.Text + " has " + overlap + "% overlap" + "\r\n");
                         if (overlap <= getOverlap())
                         {
 
                             if (overlap == 0)
                             {
-                            //clearly something went wrong, abandon frame
-                            CvInvoke.Imwrite(probFrames_di.FullName + "/" + textBox13.Text.Split(':')[1] + ".jpg", baseframe.Mat);
-                            CvInvoke.Imwrite(probFrames_di.FullName + "/" + textBox14.Text.Split(':')[1] + ".jpg", poframe.Mat);
-                                poframe.Mat.CopyTo(baseframe.Mat);
+                                //clearly something went wrong, abandon frame
 
-                            if (drawImages())
-                            {
-                                ib = getBaseImageBox();
-                                CvInvoke.Resize(baseframe.Mat, displayedBase, new System.Drawing.Size(ib.Width, ib.Height));
-                                ib.Image = displayedBase;
-                            }
-                            textBox13.Text = "Frame number: " + i + "";
-                            continue;
+                                bool baseFrameExists = false;
+                                bool poFrameExists = false;
+
+                                foreach(FileInfo frameFi in probFrames_di.GetFiles())
+                                {
+                                    if(frameFi.Name == baseImagePathTB.Text.Split(':')[1] + ".jpg")
+                                    {
+                                        baseFrameExists = true;
+                                    }
+                                    if(frameFi.Name == poImagePathTB.Text.Split(':')[1] + ".jpg")
+                                    {
+                                        poFrameExists = true;
+                                    }
+                                    if(baseFrameExists && poFrameExists)
+                                    {
+                                        break;
+                                    }
+                                }
+                                if (!baseFrameExists)
+                                {
+                                    CvInvoke.Imwrite(probFrames_di.FullName + "/" + baseImagePathTB.Text.Split(':')[1] + ".jpg", baseframe.Mat);
+                                }
+                                if (!poFrameExists)
+                                {
+                                    CvInvoke.Imwrite(probFrames_di.FullName + "/" + poImagePathTB.Text.Split(':')[1] + ".jpg", poframe.Mat);
+                                }
+                            
+                                    poframe.Mat.CopyTo(baseframe.Mat);
+
+                                if (drawImages())
+                                {
+                                    ib = getBaseImageBox();
+                                    CvInvoke.Resize(baseframe.Mat, displayedBase, new System.Drawing.Size(ib.Width, ib.Height));
+                                    ib.Image = displayedBase;
+                                }
+                                baseImagePathTB.Text = "Frame number: " + i + "";
+                                continue;
                             }
 
                             prevFrame.Mat.CopyTo(baseframe.Mat);
@@ -587,16 +660,53 @@ namespace McOverlap
 
                             frameFileName = di.FullName + "/" + videoFi.Name.Split('.')[0] + "_frame_" + preZeroes + (i - 1) + ".jpg";
 
-                            CvInvoke.Imwrite(frameFileName, baseframe.Mat);
+                            bool frameExists = false;
+                            foreach(FileInfo fi4 in di.GetFiles())
+                            {
+                                if(fi4.FullName == frameFileName)
+                                {
+                                    frameExists = true;
+                                    break;
+                                }
+                            }
 
-                            if (drawImages())
+                            if (!frameExists)
+                            {
+                                CvInvoke.Imwrite(frameFileName, baseframe.Mat);
+                            }
+
+                        overlapEstimator = new OverlapEstimator(this, detectorType, extractorType, matcherType);
+                        overlap = overlapEstimator.execute(baseframe, poframe);
+                        ConsoleOutputTB.AppendText(baseImagePathTB.Text + " | " + poImagePathTB.Text + " has " + overlap + "% overlap" + "\r\n");
+                        if (overlap <= getOverlap())
+                        {
+                            //save current potentially overlapping image as well:
+                            bool poFileExists = false;
+
+                            frameFileName = di.FullName + "/" + videoFi.Name.Split('.')[0] + "_frame_" + preZeroes + i + ".jpg";
+
+                            foreach (FileInfo fileInfo2 in di.GetFiles())
+                            {
+                                if (fileInfo2.FullName == frameFileName)
+                                {
+                                    poFileExists = true;
+                                    break;
+                                }
+                            }
+                            if (!poFileExists)
+                            {
+                                CvInvoke.Imwrite(frameFileName, poframe.Mat);
+                            }
+                        }
+
+                        if (drawImages())
                             {
                                 ib = getBaseImageBox();
                                 CvInvoke.Resize(baseframe.Mat, displayedBase, new System.Drawing.Size(ib.Width, ib.Height));
                                 ib.Image = displayedBase;
                             }
 
-                            textBox13.Text = "Frame number: " + (i - 1) + "";
+                            baseImagePathTB.Text = "Frame number: " + (i - 1) + "";
                         }
                     }
                     catch(Exception ex)
@@ -613,7 +723,9 @@ namespace McOverlap
             }
             double end = DateTime.Now.TimeOfDay.TotalMinutes;
 
-            String finalOutput = "Completed ripping " + i + " frames in: " + (end - start) + " minutes";
+            double time = Math.Round(end - start);
+
+            String finalOutput = "Completed ripping " + i + " frames in: " + time + " minutes";
 
             getConsoleTB().AppendText(finalOutput + "\r\n");
 
@@ -623,7 +735,7 @@ namespace McOverlap
 
             progressBar1.Value = 100;
 
-            MessageBox.Show(finalOutput);
+            MessageBox.Show(finalOutput + "\r\n" + "Output Directory: " + "\r\n" + di.FullName, "Report");
 
             
         }

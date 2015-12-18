@@ -34,12 +34,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.ConsoleOutputTB = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.loadBaseImageBtn = new System.Windows.Forms.Button();
+            this.loadPOImageBtn = new System.Windows.Forms.Button();
+            this.estimateOverlapBtn = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
@@ -56,18 +56,18 @@
             this.textBox7 = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox13 = new System.Windows.Forms.TextBox();
-            this.textBox14 = new System.Windows.Forms.TextBox();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
+            this.baseImagePathTB = new System.Windows.Forms.TextBox();
+            this.poImagePathTB = new System.Windows.Forms.TextBox();
+            this.loadPrevBaseImageBtn = new System.Windows.Forms.Button();
+            this.loadNextBaseImageBtn = new System.Windows.Forms.Button();
+            this.loadPrevPOImageBtn = new System.Windows.Forms.Button();
+            this.loadNextPOImageBtn = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.textBox15 = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.button9 = new System.Windows.Forms.Button();
-            this.imageBox1 = new Emgu.CV.UI.ImageBox();
-            this.imageBox2 = new Emgu.CV.UI.ImageBox();
+            this.baseImageIB = new Emgu.CV.UI.ImageBox();
+            this.estimatedOverlapIB = new Emgu.CV.UI.ImageBox();
             this.imageBox3 = new Emgu.CV.UI.ImageBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.label19 = new System.Windows.Forms.Label();
@@ -97,23 +97,23 @@
             this.matcherTypeTB = new System.Windows.Forms.TextBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.baseImageIB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.estimatedOverlapIB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox3)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
-            // textBox1
+            // ConsoleOutputTB
             // 
-            this.textBox1.Location = new System.Drawing.Point(336, 358);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(282, 41);
-            this.textBox1.TabIndex = 3;
-            this.textBox1.WordWrap = false;
+            this.ConsoleOutputTB.Location = new System.Drawing.Point(336, 358);
+            this.ConsoleOutputTB.Multiline = true;
+            this.ConsoleOutputTB.Name = "ConsoleOutputTB";
+            this.ConsoleOutputTB.ReadOnly = true;
+            this.ConsoleOutputTB.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.ConsoleOutputTB.Size = new System.Drawing.Size(282, 41);
+            this.ConsoleOutputTB.TabIndex = 3;
+            this.ConsoleOutputTB.WordWrap = false;
             // 
             // label2
             // 
@@ -135,35 +135,35 @@
             this.label3.TabIndex = 6;
             this.label3.Text = "PotentiallyOverlappingImage";
             // 
-            // button1
+            // loadBaseImageBtn
             // 
-            this.button1.Location = new System.Drawing.Point(236, 358);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(81, 48);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "Load B_Image";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.loadBaseImageBtn.Location = new System.Drawing.Point(236, 358);
+            this.loadBaseImageBtn.Name = "loadBaseImageBtn";
+            this.loadBaseImageBtn.Size = new System.Drawing.Size(81, 48);
+            this.loadBaseImageBtn.TabIndex = 7;
+            this.loadBaseImageBtn.Text = "Load B_Image";
+            this.loadBaseImageBtn.UseVisualStyleBackColor = true;
+            this.loadBaseImageBtn.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // loadPOImageBtn
             // 
-            this.button2.Location = new System.Drawing.Point(858, 349);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 48);
-            this.button2.TabIndex = 8;
-            this.button2.Text = "Load PO_Image";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.loadPOImageBtn.Location = new System.Drawing.Point(858, 349);
+            this.loadPOImageBtn.Name = "loadPOImageBtn";
+            this.loadPOImageBtn.Size = new System.Drawing.Size(75, 48);
+            this.loadPOImageBtn.TabIndex = 8;
+            this.loadPOImageBtn.Text = "Load PO_Image";
+            this.loadPOImageBtn.UseVisualStyleBackColor = true;
+            this.loadPOImageBtn.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button3
+            // estimateOverlapBtn
             // 
-            this.button3.Location = new System.Drawing.Point(347, 405);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(262, 48);
-            this.button3.TabIndex = 9;
-            this.button3.Text = "Estimate_Overlap";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.estimateOverlapBtn.Location = new System.Drawing.Point(347, 405);
+            this.estimateOverlapBtn.Name = "estimateOverlapBtn";
+            this.estimateOverlapBtn.Size = new System.Drawing.Size(262, 48);
+            this.estimateOverlapBtn.TabIndex = 9;
+            this.estimateOverlapBtn.Text = "Estimate_Overlap";
+            this.estimateOverlapBtn.UseVisualStyleBackColor = true;
+            this.estimateOverlapBtn.Click += new System.EventHandler(this.button3_Click);
             // 
             // label4
             // 
@@ -317,63 +317,63 @@
             this.label1.TabIndex = 43;
             this.label1.Text = "Estimated Overlap:";
             // 
-            // textBox13
+            // baseImagePathTB
             // 
-            this.textBox13.Location = new System.Drawing.Point(12, 358);
-            this.textBox13.Multiline = true;
-            this.textBox13.Name = "textBox13";
-            this.textBox13.Size = new System.Drawing.Size(220, 45);
-            this.textBox13.TabIndex = 44;
-            this.textBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.baseImagePathTB.Location = new System.Drawing.Point(12, 358);
+            this.baseImagePathTB.Multiline = true;
+            this.baseImagePathTB.Name = "baseImagePathTB";
+            this.baseImagePathTB.Size = new System.Drawing.Size(220, 45);
+            this.baseImagePathTB.TabIndex = 44;
+            this.baseImagePathTB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // textBox14
+            // poImagePathTB
             // 
-            this.textBox14.Location = new System.Drawing.Point(624, 352);
-            this.textBox14.Multiline = true;
-            this.textBox14.Name = "textBox14";
-            this.textBox14.Size = new System.Drawing.Size(228, 45);
-            this.textBox14.TabIndex = 45;
-            this.textBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.poImagePathTB.Location = new System.Drawing.Point(624, 352);
+            this.poImagePathTB.Multiline = true;
+            this.poImagePathTB.Name = "poImagePathTB";
+            this.poImagePathTB.Size = new System.Drawing.Size(228, 45);
+            this.poImagePathTB.TabIndex = 45;
+            this.poImagePathTB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // button4
+            // loadPrevBaseImageBtn
             // 
-            this.button4.Location = new System.Drawing.Point(12, 405);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(111, 52);
-            this.button4.TabIndex = 46;
-            this.button4.Text = "Load Previous Image";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.loadPrevBaseImageBtn.Location = new System.Drawing.Point(12, 405);
+            this.loadPrevBaseImageBtn.Name = "loadPrevBaseImageBtn";
+            this.loadPrevBaseImageBtn.Size = new System.Drawing.Size(111, 52);
+            this.loadPrevBaseImageBtn.TabIndex = 46;
+            this.loadPrevBaseImageBtn.Text = "Load Previous Image";
+            this.loadPrevBaseImageBtn.UseVisualStyleBackColor = true;
+            this.loadPrevBaseImageBtn.Click += new System.EventHandler(this.button4_Click);
             // 
-            // button5
+            // loadNextBaseImageBtn
             // 
-            this.button5.Location = new System.Drawing.Point(129, 405);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(101, 52);
-            this.button5.TabIndex = 47;
-            this.button5.Text = "Load Next Image";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.loadNextBaseImageBtn.Location = new System.Drawing.Point(129, 405);
+            this.loadNextBaseImageBtn.Name = "loadNextBaseImageBtn";
+            this.loadNextBaseImageBtn.Size = new System.Drawing.Size(101, 52);
+            this.loadNextBaseImageBtn.TabIndex = 47;
+            this.loadNextBaseImageBtn.Text = "Load Next Image";
+            this.loadNextBaseImageBtn.UseVisualStyleBackColor = true;
+            this.loadNextBaseImageBtn.Click += new System.EventHandler(this.button5_Click);
             // 
-            // button6
+            // loadPrevPOImageBtn
             // 
-            this.button6.Location = new System.Drawing.Point(624, 403);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(111, 52);
-            this.button6.TabIndex = 48;
-            this.button6.Text = "Load Previous Image";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.loadPrevPOImageBtn.Location = new System.Drawing.Point(624, 403);
+            this.loadPrevPOImageBtn.Name = "loadPrevPOImageBtn";
+            this.loadPrevPOImageBtn.Size = new System.Drawing.Size(111, 52);
+            this.loadPrevPOImageBtn.TabIndex = 48;
+            this.loadPrevPOImageBtn.Text = "Load Previous Image";
+            this.loadPrevPOImageBtn.UseVisualStyleBackColor = true;
+            this.loadPrevPOImageBtn.Click += new System.EventHandler(this.button6_Click);
             // 
-            // button7
+            // loadNextPOImageBtn
             // 
-            this.button7.Location = new System.Drawing.Point(741, 403);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(111, 52);
-            this.button7.TabIndex = 49;
-            this.button7.Text = "Load Next Image";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
+            this.loadNextPOImageBtn.Location = new System.Drawing.Point(741, 403);
+            this.loadNextPOImageBtn.Name = "loadNextPOImageBtn";
+            this.loadNextPOImageBtn.Size = new System.Drawing.Size(111, 52);
+            this.loadNextPOImageBtn.TabIndex = 49;
+            this.loadNextPOImageBtn.Text = "Load Next Image";
+            this.loadNextPOImageBtn.UseVisualStyleBackColor = true;
+            this.loadNextPOImageBtn.Click += new System.EventHandler(this.button7_Click);
             // 
             // button8
             // 
@@ -412,23 +412,23 @@
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
-            // imageBox1
+            // baseImageIB
             // 
-            this.imageBox1.BackColor = System.Drawing.Color.Black;
-            this.imageBox1.Location = new System.Drawing.Point(12, 135);
-            this.imageBox1.Name = "imageBox1";
-            this.imageBox1.Size = new System.Drawing.Size(305, 217);
-            this.imageBox1.TabIndex = 2;
-            this.imageBox1.TabStop = false;
+            this.baseImageIB.BackColor = System.Drawing.Color.Black;
+            this.baseImageIB.Location = new System.Drawing.Point(12, 135);
+            this.baseImageIB.Name = "baseImageIB";
+            this.baseImageIB.Size = new System.Drawing.Size(305, 217);
+            this.baseImageIB.TabIndex = 2;
+            this.baseImageIB.TabStop = false;
             // 
-            // imageBox2
+            // estimatedOverlapIB
             // 
-            this.imageBox2.BackColor = System.Drawing.Color.Black;
-            this.imageBox2.Location = new System.Drawing.Point(323, 136);
-            this.imageBox2.Name = "imageBox2";
-            this.imageBox2.Size = new System.Drawing.Size(295, 216);
-            this.imageBox2.TabIndex = 2;
-            this.imageBox2.TabStop = false;
+            this.estimatedOverlapIB.BackColor = System.Drawing.Color.Black;
+            this.estimatedOverlapIB.Location = new System.Drawing.Point(323, 136);
+            this.estimatedOverlapIB.Name = "estimatedOverlapIB";
+            this.estimatedOverlapIB.Size = new System.Drawing.Size(295, 216);
+            this.estimatedOverlapIB.TabIndex = 2;
+            this.estimatedOverlapIB.TabStop = false;
             // 
             // imageBox3
             // 
@@ -631,9 +631,10 @@
             // 
             this.detectorTypeTB.BackColor = System.Drawing.Color.Black;
             this.detectorTypeTB.ForeColor = System.Drawing.Color.White;
-            this.detectorTypeTB.Location = new System.Drawing.Point(12, 565);
+            this.detectorTypeTB.Location = new System.Drawing.Point(12, 554);
+            this.detectorTypeTB.Multiline = true;
             this.detectorTypeTB.Name = "detectorTypeTB";
-            this.detectorTypeTB.Size = new System.Drawing.Size(100, 20);
+            this.detectorTypeTB.Size = new System.Drawing.Size(100, 31);
             this.detectorTypeTB.TabIndex = 64;
             this.detectorTypeTB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -641,9 +642,10 @@
             // 
             this.extractorTypeTB.BackColor = System.Drawing.Color.Black;
             this.extractorTypeTB.ForeColor = System.Drawing.Color.White;
-            this.extractorTypeTB.Location = new System.Drawing.Point(118, 565);
+            this.extractorTypeTB.Location = new System.Drawing.Point(118, 554);
+            this.extractorTypeTB.Multiline = true;
             this.extractorTypeTB.Name = "extractorTypeTB";
-            this.extractorTypeTB.Size = new System.Drawing.Size(100, 20);
+            this.extractorTypeTB.Size = new System.Drawing.Size(100, 31);
             this.extractorTypeTB.TabIndex = 65;
             this.extractorTypeTB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -651,9 +653,10 @@
             // 
             this.matcherTypeTB.BackColor = System.Drawing.Color.Black;
             this.matcherTypeTB.ForeColor = System.Drawing.Color.White;
-            this.matcherTypeTB.Location = new System.Drawing.Point(224, 565);
+            this.matcherTypeTB.Location = new System.Drawing.Point(224, 554);
+            this.matcherTypeTB.Multiline = true;
             this.matcherTypeTB.Name = "matcherTypeTB";
-            this.matcherTypeTB.Size = new System.Drawing.Size(100, 20);
+            this.matcherTypeTB.Size = new System.Drawing.Size(100, 31);
             this.matcherTypeTB.TabIndex = 66;
             this.matcherTypeTB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -682,26 +685,26 @@
             this.Controls.Add(this.label19);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.imageBox3);
-            this.Controls.Add(this.imageBox2);
-            this.Controls.Add(this.imageBox1);
+            this.Controls.Add(this.estimatedOverlapIB);
+            this.Controls.Add(this.baseImageIB);
             this.Controls.Add(this.button9);
             this.Controls.Add(this.label18);
             this.Controls.Add(this.textBox15);
             this.Controls.Add(this.button8);
-            this.Controls.Add(this.button7);
-            this.Controls.Add(this.button6);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.textBox14);
-            this.Controls.Add(this.textBox13);
+            this.Controls.Add(this.loadNextPOImageBtn);
+            this.Controls.Add(this.loadPrevPOImageBtn);
+            this.Controls.Add(this.loadNextBaseImageBtn);
+            this.Controls.Add(this.loadPrevBaseImageBtn);
+            this.Controls.Add(this.poImagePathTB);
+            this.Controls.Add(this.baseImagePathTB);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.estimateOverlapBtn);
+            this.Controls.Add(this.loadPOImageBtn);
+            this.Controls.Add(this.loadBaseImageBtn);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.ConsoleOutputTB);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainUI";
@@ -709,8 +712,8 @@
             this.Load += new System.EventHandler(this.MainUI_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.baseImageIB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.estimatedOverlapIB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox3)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -721,12 +724,12 @@
         }
 
         #endregion
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox ConsoleOutputTB;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button loadBaseImageBtn;
+        private System.Windows.Forms.Button loadPOImageBtn;
+        private System.Windows.Forms.Button estimateOverlapBtn;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
@@ -742,19 +745,19 @@
         private System.Windows.Forms.TextBox textBox7;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox13;
-        private System.Windows.Forms.TextBox textBox14;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.TextBox baseImagePathTB;
+        private System.Windows.Forms.TextBox poImagePathTB;
+        private System.Windows.Forms.Button loadPrevBaseImageBtn;
+        private System.Windows.Forms.Button loadNextBaseImageBtn;
+        private System.Windows.Forms.Button loadPrevPOImageBtn;
+        private System.Windows.Forms.Button loadNextPOImageBtn;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.TextBox textBox15;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Button button9;
-        private Emgu.CV.UI.ImageBox imageBox1;
-        private Emgu.CV.UI.ImageBox imageBox2;
+        private Emgu.CV.UI.ImageBox baseImageIB;
+        private Emgu.CV.UI.ImageBox estimatedOverlapIB;
         private Emgu.CV.UI.ImageBox imageBox3;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Label label19;
